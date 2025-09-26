@@ -131,7 +131,6 @@ body {
     align-items: center;
     padding: 0.25rem;
     color: var(--white);
-    /* Warna abu-abu untuk link tidak aktif */
     text-decoration: none;
     border-radius: 8px;
     margin-bottom: 0.5rem;
