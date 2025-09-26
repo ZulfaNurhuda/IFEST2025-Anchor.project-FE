@@ -2,7 +2,7 @@
     box-sizing: border-box;
 }
 
-@import url('https://fonts.google.com/specimen/Mona+Sans?categoryFilters=Feeling:%2FExpressive%2FBusiness');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
 html,
 body {
@@ -13,7 +13,7 @@ body {
 }
 
 body {
-    font-family: 'Mona Sans', sans-serif;
+    font-family: 'Inter', sans-serif;
     height: 100vh;
 }
 
@@ -21,6 +21,9 @@ body {
     --white: #f8f8f8;
     --blue: #01204e;
     --text-secondary: #A9B4C2;
+    --light-blue: #f8f9fa;
+    --border-color: #e1e5e9;
+    --success-color: #28a745;
 }
 
 .page-header {
@@ -229,6 +232,9 @@ body {
     color: var(--blue);
     margin-top: 80px;
     margin-left: 225px;
+    min-height: calc(100vh - 80px);
+    background-color: #f8f9fa;
+    color: var(--blue);
 }
 
 .tabs {

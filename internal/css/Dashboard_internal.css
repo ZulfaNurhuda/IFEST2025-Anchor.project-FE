@@ -2,7 +2,7 @@
     box-sizing: border-box;
 }
 
-@import url('https://fonts.google.com/specimen/Mona+Sans?categoryFilters=Feeling:%2FExpressive%2FBusiness');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
 html,
 body {
@@ -14,7 +14,7 @@ body {
 }
 
 body {
-    font-family: 'Mona Sans', sans-serif;
+    font-family: 'Inter', sans-serif;
     height: 100vh;
 }
 
@@ -22,6 +22,9 @@ body {
     --white: #f8f8f8;
     --blue: #01204e;
     --text-secondary: #A9B4C2;
+    --light-blue: #f8f9fa;
+    --border-color: #e1e5e9;
+    --success-color: #28a745;
 }
 
 .top-header {
@@ -203,12 +206,12 @@ body {
 
 .main-content {
     flex-grow: 1;
-    border-radius: 12px;
     padding: 2rem;
-    overflow-y: auto;
-    color: var(--blue);
-    margin-top: 70px;
+    margin-top: 80px;
     margin-left: 225px;
+    min-height: calc(100vh - 80px);
+    background-color: #f8f9fa;
+    color: var(--blue);
 }
 
 .main-content p {
@@ -394,4 +397,66 @@ body {
     border-radius: 8px;
     padding: 1.25rem;
     cursor: pointer;
+}
+
+/* Modern Dashboard Section Styles - matching profil.html */
+.dashboard-page-header {
+    background: linear-gradient(135deg, var(--blue), #0a2a6b);
+    border-radius: 15px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    color: white;
+    box-shadow: 0 4px 15px rgba(1, 32, 78, 0.2);
+}
+
+.header-title {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.5rem;
+}
+
+.header-title i {
+    font-size: 1.8rem;
+    opacity: 0.9;
+}
+
+.header-text h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 0;
+}
+
+.header-text span {
+    font-size: 1rem;
+    opacity: 0.9;
+}
+
+.dashboard-section {
+    background: white;
+    border-radius: 15px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.dashboard-section .section-header {
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.dashboard-section .section-header h3 {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--blue);
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.dashboard-section .section-header h3 i {
+    font-size: 1.2rem;
+    opacity: 0.8;
 }

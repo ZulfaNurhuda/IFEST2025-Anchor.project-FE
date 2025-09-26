@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Login - Anchor</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-  <link href="Login.css" rel="stylesheet">
+  <link href="login.css" rel="stylesheet">
 </head>
 <body>
     <div class="login-container">
@@ -14,15 +14,62 @@
         </div>
         <h2>Selamat Datang di <b><i>ANCHOR</i></b></h2>
         <p>Silakan masuk dengan akun Anda</p>
-        <form>
+        <form id="loginForm">
             <label>Email</label>
-            <input type="email" placeholder="Email" required>
+            <input type="email" id="email" placeholder="Email" required>
             <label>Kata Sandi</label>
-            <input type="password" placeholder="Kata sandi" required>
+            <input type="password" id="password" placeholder="Kata sandi" required>
             <span class="forgot">Lupa kata sandi?</span>
-            <button type="submit">Masuk</button>
+            <button type="submit" id="loginBtn">Masuk</button>
         </form>
     </div>
+
+    <script src="assets/js/api.js"></script>
+    <script src="assets/js/ui.js"></script>
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const loginBtn = document.getElementById('loginBtn');
+            const originalText = loginBtn.innerHTML;
+
+            if (!email || !password) {
+                window.ui.displayError('Email dan password harus diisi');
+                return;
+            }
+
+            try {
+                window.ui.showLoading(loginBtn);
+
+                const response = await window.api.login(email, password);
+
+                if (response.token) {
+                    window.auth.setToken(response.token);
+                    window.ui.displaySuccess('Login berhasil!');
+
+                    // Redirect based on user role
+                    setTimeout(() => {
+                        window.location.href = 'dashboard.html';
+                    }, 1000);
+                } else {
+                    throw new Error('Login gagal');
+                }
+            } catch (error) {
+                window.ui.displayError(error.message || 'Email atau password salah');
+            } finally {
+                window.ui.hideLoading(loginBtn, originalText);
+            }
+        });
+
+        // Check if already logged in
+        document.addEventListener('DOMContentLoaded', () => {
+            if (window.auth.isAuthenticated()) {
+                window.location.href = 'dashboard.html';
+            }
+        });
+    </script>
 </body>
 </html>
 

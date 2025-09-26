@@ -4,124 +4,117 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Riwayat - Anchor</title>
-    <link rel="stylesheet" href="css/riwayat_internal.css">
+    <title>Riwayat Aktivitas Internal - Anchor</title>
+    <link rel="stylesheet" href="../css/history.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 </head>
 
 <body>
     <header class="top-header">
         <div class="logo-container">
-            <img src="assets/logo-pelindo.png" alt="Logo Pelindo">
+            <img src="../assets/logo-pelindo.png" alt="Logo Pelindo">
         </div>
         <div class="search-container">
-            <input type="text" placeholder="Cari Kontrak">
-            <i class="fa-solid fa-filter filter-icon"></i>
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="search" placeholder="Cari aktivitas atau kontrak" data-history-search>
         </div>
     </header>
+
     <div class="main-container">
-        <nav class="sidebar">
+        <aside class="sidebar">
             <ul class="sidebar-menu">
-                <li><a href="#"><i class="fa-solid fa-grip"></i> Beranda</a></li>
-                <li><a href="#"><i class="fa-solid fa-arrow-up-from-bracket"></i>Unggah</a></li>
-                <li><a href="#"><i class="fa-solid fa-file-lines"></i> Dokumen</a></li>
-                <li><a href="#"><i class="fa-solid fa-bell"></i> Notifikasi</a></li>
-                <li><a class="active" href="#"><i class="fa-solid fa-clock-rotate-left"></i> Riwayat</a></li>
-                <li><a href="#"><i class="fa-solid fa-gear"></i> Pengaturan</a></li>
+                <li><a href="../Dashboard.html"><i class="fa-solid fa-grip"></i> Beranda</a></li>
+                <li><a href="unggah1_internal.html"><i class="fa-solid fa-arrow-up-from-bracket"></i> Unggah</a></li>
+                <li><a href="../dokumen_all.html"><i class="fa-solid fa-file-lines"></i> Dokumen</a></li>
+                <li><a href="notifikasi_internal.html"><i class="fa-solid fa-bell"></i> Notifikasi</a></li>
+                <li><a class="active" href="riwayat_internal.html"><i class="fa-solid fa-clock-rotate-left"></i> Riwayat</a></li>
+                <li><a href="profil_internal.html"><i class="fa-solid fa-gear"></i> Pengaturan</a></li>
             </ul>
 
             <div class="sidebar-profile">
-                <img class="profile-img" src="assets/profile-picture.jpg" alt="Foto Profil Keisha">
-                <a href="#" class="profile-link">
-                    <span class="profile-name">Keisha Sakura</span>
-                </a>
-                <small class="profile-title">Tim Hukum</small>
+                <img class="profile-img" src="../assets/profile-picture.jpg" alt="Foto Profil">
+                <span class="profile-name">Pengguna Internal</span>
+                <small class="profile-title">Tim Internal</small>
             </div>
-        </nav>
-        <main class="main-content">
-            <div class="page-header">
-                <i class="fa-solid fa-clock-rotate-left"></i>
-                <h1 class="page-title">Riwayat Aktivitas</h1>
-            </div>
-            <div class="activity-list">
-                <div class="activity-list-header">
-                    <div class="header-item">Jenis Aktivitas</div>
-                    <div class="header-item">Judul Dokumen</div>
-                    <div class="header-item">Tanggal Diperbarui</div>
+        </aside>
+
+        <main class="main-content history-page" data-role="internal">
+            <section class="page-hero">
+                <div class="hero-text">
+                    <h1>Riwayat Aktivitas</h1>
+                    <p>Lihat perjalanan persetujuan kontrak yang Anda kelola dan tindak lanjuti setiap langkah penting.</p>
+                </div>
+                <div class="hero-meta">
+                    <span id="currentDate"></span>
+                </div>
+            </section>
+
+            <section class="history-summary" data-history-summary>
+                <article class="summary-card" data-summary="total">
+                    <span class="summary-label">Total Aktivitas</span>
+                    <span class="summary-value">0</span>
+                    <span class="summary-trend">Riwayat yang dapat Anda telusuri</span>
+                </article>
+                <article class="summary-card" data-summary="contract_review">
+                    <span class="summary-label">Aktivitas Review</span>
+                    <span class="summary-value">0</span>
+                    <span class="summary-trend">Pengajuan dan revisi kontrak</span>
+                </article>
+                <article class="summary-card" data-summary="approved">
+                    <span class="summary-label">Kontrak Disetujui</span>
+                    <span class="summary-value">0</span>
+                    <span class="summary-trend">Disetujui lintas divisi</span>
+                </article>
+                <article class="summary-card" data-summary="highRisk">
+                    <span class="summary-label">Risiko Tinggi</span>
+                    <span class="summary-value">0</span>
+                    <span class="summary-trend">Kontrak yang perlu perhatian ekstra</span>
+                </article>
+            </section>
+
+            <section class="history-panel">
+                <div class="history-toolbar">
+                    <div class="history-filters">
+                        <button class="active" data-history-filter="all">Semua</button>
+                        <button data-history-filter="contract_upload">Upload</button>
+                        <button data-history-filter="contract_review">Review</button>
+                        <button data-history-filter="contract_approval">Persetujuan</button>
+                        <button data-history-filter="contract_rejection">Ditolak</button>
+                    </div>
+                    <div class="date-filter">
+                        <select id="dateFilter">
+                            <option value="today">Hari Ini</option>
+                            <option value="week">7 Hari Terakhir</option>
+                            <option value="month" selected>Bulan Ini</option>
+                            <option value="all">Semua Waktu</option>
+                        </select>
+                    </div>
                 </div>
 
-                <div class="activity-item">
-                    <div class="activity-type">
-                        <span class="badge status-approved">Menyetujui Kontrak</span>
-                    </div>
-                    <div class="activity-document">Perjanjian Kerjasama antara PT Cipta Kreasi dan CV Media Inovasi
-                    </div>
-                    <div class="activity-date">26/09/2025</div>
+                <div class="loader" data-history-loader>
+                    <i class="fa-solid fa-spinner fa-spin"></i>
+                    <span>Memuat riwayat aktivitas...</span>
                 </div>
 
-                <div class="activity-item">
-                    <div class="activity-type">
-                        <span class="badge status-comment">Menambahkan Komentar</span>
-                    </div>
-                    <div class="activity-document">Kontrak Sewa Kendaraan Operasional Bulanan PT Sukamaju</div>
-                    <div class="activity-date">26/09/2025</div>
-                </div>
-
-                <div class="activity-item">
-                    <div class="activity-type">
-                        <span class="badge status-edited">Mengubah Kontrak</span>
-                    </div>
-                    <div class="activity-document">Perjanjian Kerja Lepas antara Citra Lestari Design dan PT Ritel
-                        Makmur Sejahtera</div>
-                    <div class="activity-date">25/09/2025</div>
-                </div>
-
-                <div class="activity-item">
-                    <div class="activity-type">
-                        <span class="badge status-rejected">Menolak Kontrak</span>
-                    </div>
-                    <div class="activity-document">Perjanjian Jasa Konsultasi Keamanan Siber Tahunan - PT Bank Sentosa
-                        Tbk</div>
-                    <div class="activity-date">24/09/2025</div>
-                </div>
-                <div class="activity-item">
-                    <div class="activity-type">
-                        <span class="badge status-requested">Mengajukan Persetujuan</span>
-                    </div>
-                    <div class="activity-document">Kontrak Sewa Gudang Berpendingin - PT Pangan Sejahtera Indonesia
-                    </div>
-                    <div class="activity-date">24/09/2025</div>
-                </div>
-                <div class="activity-item">
-                    <div class="activity-type">
-                        <span class="badge status-added">Menambahkan Kontrak Baru</span>
-                    </div>
-                    <div class="activity-document">Surat Penawaran Kerja - PT Kreasi Media Pratama
-                    </div>
-                    <div class="activity-date">24/09/2025</div>
-                </div>
-                <div class="activity-item">
-                    <div class="activity-type">
-                        <span class="badge status-analyzed">Menganalisis dengan AI</span>
-                    </div>
-                    <div class="activity-document">Perjanjian Kerjasama Pemasaran antara PT Nusa Boga Sejati dan Yayasan
-                        Pendidikan Harapan Bangsa
-                    </div>
-                    <div class="activity-date">24/09/2025</div>
-                </div>
-                <div class="activity-item">
-                    <div class="activity-type">
-                        <span class="badge status-opened">Membuka Kontrak</span>
-                    </div>
-                    <div class="activity-document">Adendum Perjanjian Kerja Karyawan No. 045/HRD/I/2023 - PT Logistik
-                        Express Indonesia
-                    </div>
-                    <div class="activity-date">24/09/2025</div>
-                </div>
-            </div>
+                <div id="historyContainer" class="history-container"></div>
+                <div id="pagination" class="pagination-container"></div>
+            </section>
         </main>
     </div>
 
+    <script src="../assets/js/api.js"></script>
+    <script src="../assets/js/ui.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            document.getElementById('currentDate').textContent = new Date().toLocaleDateString('id-ID', options);
+        });
+        window.historyPageConfig = {
+            role: 'internal',
+            defaultDateFilter: 'month'
+        };
+    </script>
+    <script src="../assets/js/history.js"></script>
 </body>
 
 </html>
