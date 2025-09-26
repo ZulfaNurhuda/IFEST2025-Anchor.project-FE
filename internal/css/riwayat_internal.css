@@ -208,7 +208,7 @@ body {
     flex-grow: 1;
     background-color: var(--white);
     border-radius: 12px;
-    padding: 2rem;
+    padding: 3rem 5rem;
     overflow-y: auto;
     color: var(--blue);
     margin-top: 80px;
@@ -224,10 +224,8 @@ body {
 }
 
 .page-title {
-    font-size: 2rem;
-    font-weight: bolder;
+    font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 0.75px;
     color: var(--blue);
     padding-bottom: 1rem;
 }
@@ -246,7 +244,6 @@ body {
 .activity-item {
     display: grid;
     grid-template-columns: 2fr 5fr 2fr;
-    /* Proporsi kolom */
     align-items: center;
     gap: 1rem;
     padding: 1rem;

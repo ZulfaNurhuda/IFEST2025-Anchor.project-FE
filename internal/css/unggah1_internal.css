@@ -224,7 +224,7 @@ body {
 
 .upload-title {
     text-align: center;
-    color: #01204e;
+    color: var(--blue);
     font-weight: 600;
     margin-bottom: 3rem;
 }
