@@ -213,6 +213,7 @@ body {
     color: var(--blue);
     margin-top: 80px;
     margin-left: 225px;
+    min-height: 100vh;
 }
 
 .page-header {
@@ -237,32 +238,107 @@ body {
     margin-bottom: 0.6rem;
 }
 
-.notification-item {
-    padding: 1.25rem;
-    border-bottom: 1px solid #dee2e6;
+.activity-list {
+    width: 100%;
 }
 
-.notification-item p {
-    margin: 0;
-    margin-bottom: 0.5rem;
-    line-height: 1.6;
-    color: #212529;
+.activity-list-header,
+.activity-item {
+    display: grid;
+    grid-template-columns: 2fr 5fr 2fr;
+    /* Proporsi kolom */
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
 }
 
-.notification-item .timestamp {
-    font-size: 0.85rem;
+.activity-list-header .header-item:nth-child(3) {
+    text-align: center;
+}
+
+.activity-list-header {
     color: #6c757d;
+    font-weight: 600;
+    font-size: 0.9rem;
+    border-bottom: 2px solid #dee2e6;
+    margin-bottom: 0.5rem;
 }
 
-.notification-item:hover {
-    font-weight: bold;
-    border-radius: 8px;
-    padding: 1.25rem;
+.activity-item {
+    background-color: #f8f9fa;
+    border-radius: 12px;
+    margin-bottom: 1rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    color: #212529;
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
 }
 
-.notification-item.new {
-    background-color: #e9f0f8;
-    border-radius: 8px;
-    padding: 1.25rem;
+.activity-document {
+    font-weight: 500;
+}
+
+.activity-date {
+    font-size: 0.9rem;
+    text-align: center;
+    color: #495057;
+}
+
+.badge {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #fff;
+    min-width: 215px;
+    text-align: center;
+}
+
+.status-approved {
+    background-color: #28a745;
+}
+
+.status-comment {
+    background-color: #17a2b8;
+}
+
+.status-edited {
+    background-color: #F6BD18;
+    color: white;
+}
+
+.status-rejected {
+    background-color: #dc3545;
+}
+
+
+.status-submitted {
+    background-color: #FEC89A;
+    color: #A56D3B;
+}
+
+.status-requested {
+    background-color: #FF6518;
+    color: white;
+}
+
+.status-added {
+    background-color: #DB43B7;
+    color: whit;
+}
+
+.status-analyzed {
+    background-color: #6F42C1;
+    color: white;
+}
+
+.status-opened {
+    background-color: #948F8F;
+    color: white;
+}
+
+.activity-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
     cursor: pointer;
 }
