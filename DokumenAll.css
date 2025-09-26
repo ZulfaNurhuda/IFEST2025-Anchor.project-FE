@@ -24,7 +24,32 @@ body {
     --text-secondary: #A9B4C2;
 }
 
+.page-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-left: 1.5rem;
+    margin-bottom: -40px;
+}
+
+.page-title {
+    font-size: 2rem;
+    font-weight: bolder;
+    text-transform: uppercase;
+    letter-spacing: 0.75px;
+    color: var(--blue);
+}
+
+.page-header i {
+    color: var(--blue);
+    font-size: 1.8rem;
+}
+
 .top-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
     display: grid;
     grid-template-columns: 1fr auto 1fr;
     align-items: center;
@@ -32,6 +57,7 @@ body {
     padding: 1rem 1.5rem;
     background-color: var(--blue);
     height: 80px;
+    z-index: 1000;
 }
 
 .logo-container {
@@ -101,18 +127,22 @@ body {
 .main-container {
     display: flex;
     flex-grow: 1;
-    width: 100%;
 }
 
 .sidebar {
+    position: fixed;
+    top: 80px;
+    left: 0;
+    bottom: 0;
     background-color: var(--blue);
     width: 225px;
     padding: 1.5rem;
     flex-shrink: 0;
     color: var(--white);
-    height: calc(100vh - 80px);
+    height: calc(100vh-60px);
     display: flex;
     flex-direction: column;
+    overflow-y: hidden;
 }
 
 .sidebar-menu {
@@ -132,6 +162,7 @@ body {
     border-radius: 8px;
     margin-bottom: 0.5rem;
     font-weight: normal;
+    font-size: 1.0rem;
 }
 
 .sidebar-menu li a:hover {
@@ -192,13 +223,13 @@ body {
 }
 
 .main-content {
-    flex: 1;
-    margin: 0;
-    padding: 20px;
-}
-
-.main-content h1 {
-    margin: 20px;
+    flex-grow: 1;
+    border-radius: 12px;
+    padding: 2rem;
+    overflow-y: auto;
+    color: var(--blue);
+    margin-top: 80px;
+    margin-left: 225px;
 }
 
 .tabs {
@@ -209,6 +240,7 @@ body {
     justify-content: center;
     align-items: center;
     margin-bottom: 20px;
+    margin-top: 20px;
 }
 
 .tab {
