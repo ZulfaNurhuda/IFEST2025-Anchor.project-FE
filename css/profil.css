@@ -203,3 +203,37 @@ body {
     font-size: 0.9rem;
     color: var(--white);
 }
+
+.main-content {
+    flex-grow: 1;
+    background-color: var(--white);
+    border-radius: 12px;
+    padding: 2rem;
+    overflow-y: auto;
+    color: var(--blue);
+    margin-top: 80px;
+    margin-left: 225px;
+    min-height: 100vh;
+}
+
+.page-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-left: 1.5rem;
+}
+
+.page-title {
+    font-size: 2rem;
+    font-weight: bolder;
+    text-transform: uppercase;
+    letter-spacing: 0.75px;
+    color: var(--blue);
+    padding-bottom: 1rem;
+}
+
+.page-header i {
+    color: var(--blue);
+    font-size: 1.8rem;
+    margin-bottom: 0.6rem;
+}
