@@ -10,6 +10,7 @@ body {
     padding: 0;
     box-sizing: border-box;
     height: 100%;
+
 }
 
 body {
@@ -40,9 +41,7 @@ body {
 
 .logo-container {
     grid-column: 1;
-    /*logo pada kolom pertama (kiri)*/
     justify-self: start;
-    /* logo rata kiri */
     padding: 0.5 rem 1.5rem;
     border-radius: 12px;
     background-color: #f8f8f8;
@@ -76,7 +75,6 @@ body {
 }
 
 .search-container input {
-    /* Untuk teks yang diketik */
     background: none;
     border: none;
     outline: none;
@@ -213,67 +211,187 @@ body {
     margin-left: 225px;
 }
 
-.field {
-  margin-bottom: 20px;
-}
-
-.field label {
-  display: block;
-  margin-bottom: 8px;
-  font-weight: 500;
+.main-content p {
+  font-size: 2rem;
+  font-weight: bold;
   color: #01204E;
+  margin-bottom: 40px;
 }
 
-.placeholder {
-  background-color: #e6e6e6;
-  border-radius: 10px;
-  height: 40px;
+.risiko-kontrak {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
   width: 100%;
 }
 
-.yesno-btn {
+.pie {
+  --size: 250px;
+  width: var(--size);
+  height: var(--size);
+  border-radius: 50%;
+  position: relative;
+  background: conic-gradient(#FEAE6F 70%, #028391 30%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.32);
+  margin-right: 30px;
+  margin-bottom: 30px;
+}
+
+.pie .center {
+  width: 60%;
+  height: 60%;
+  background: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 1000;
+  font-size: 47px;
+  color: #e74c3c;
+  box-shadow: inset 0 -2px 6px rgba(0,0,0,0.06);
+}
+
+.styled-table1 {
+  flex: 1;
+}
+
+.styled-table1 table {
+  width: 100%;
+  border-collapse: collapse;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
+  font-size: 14px;
+}
+
+.styled-table1 th {
+  background-color: #01204E;
+  color: #F6DCAC;
+  padding: 15px;
+  text-align: center;
+}
+
+.styled-table1 td {
+  padding: 15px;
+  color: #028391;
+  text-align: center;
+}
+
+.styled-table1 tr:nth-child(odd) td {
+  background-color: #fff;
+}
+.styled-table1 tr:nth-child(even) td {
+  background-color: #F6DCAC;
+}
+
+.styled-table1 tr:hover td {
+  background-color: #FEAE6F;
+  color: #01204E;
+  cursor: pointer;
+}
+
+.info-table {
+  width: 100%;
+  border-collapse: collapse;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
+  text-align: center;
+}
+
+.info-table th {
+  padding: 12px;
+  font-size: 20px;
+  margin: 20px;
+  margin-bottom: 20px;
+}
+
+.info-table td {
+  padding: 10px;
+  color: #333;
+}
+
+.info-table tr:nth-child(even) td {
+  background-color: #f9f9f9;
+}
+.info-table tr:nth-child(odd) td {
+  background-color: #fdf1db;
+}
+
+.info-table p {
+  margin: 4px 0;
+  font-size: 14px;
+  font-weight: normal;
+  color: #222;
+}
+
+.main-content .bignum {
+  font-size: 30px;
+  font-weight: bold;
+  margin: 10px;
+}
+
+.main-content .bignum-yellow {
+  font-size: 30px;
+  font-weight: bold;
+  color: #DACA18;
+  margin: 10px;
+}
+
+.main-content .bignum-green {
+  font-size: 30px;
+  font-weight: bold;
+  color: #30AB68;
+  margin: 10px;
+}
+
+.page-header {
     display: flex;
-}
-
-.no-btn {
-    width: 50%;
-    float: left;
-    margin: 10px;
-    background-color: #f8f8f8;
-    color: #FF0000;
-    border-color: #FF0000;
-    border-radius: 10px;
-    padding: 8px;
-    cursor: pointer;
-    transition: all 0.3s ease; 
-}
-
-.yes-btn {
-    width: 50%;
-    float: right;
-    margin: 10px;
-    background-color: #f8f8f8;
-    color: #30AB68;
-    border-color: #30AB68;
-    border-radius: 10px;
-    padding: 8px;
-    cursor: pointer;
-    transition: all 0.3s ease; 
-}
-
-.no-btn:hover {
-    background-color: #f9d5d5;
-}
-
-.yes-btn:hover {
-    background-color: #c5fcdd;
-}
-
-.box {
-    background-color: #e6e6e6;
-    border-radius: 10px;
-    height: auto;
-    padding: 10px;
-    width: 100%;
+    align-items: center;
+    gap: 1rem;
+    margin-left: 1.5rem;
+    margin-bottom: -12px;
     margin-top: 10px;
+}
+
+.page-title {
+    font-size: 2rem;
+    font-weight: bolder;
+    text-transform: uppercase;
+    letter-spacing: 0.75px;
+    color: var(--blue);
+}
+
+.page-header i {
+    color: var(--blue);
+    font-size: 1.8rem;
+}
+
+.notification-item {
+    padding: 1.25rem;
+    border-bottom: 1px solid #dee2e6;
+    font-size: 14px;
+}
+
+.notification-item p {
+    font-size: 18px;
+    margin: 0;
+    margin-bottom: 0.5rem;
+    line-height: 1.6;
+    color: #212529;
+}
+
+.notification-item .timestamp {
+    font-size: 0.85rem;
+    color: #6c757d;
+}
+
+.notification-item:hover {
+    background-color: #e9f0f8;
+    border-radius: 8px;
+    padding: 1.25rem;
+    cursor: pointer;
 }

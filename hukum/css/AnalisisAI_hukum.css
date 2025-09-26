@@ -23,27 +23,6 @@ body {
     --text-secondary: #A9B4C2;
 }
 
-.page-header {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    margin-left: 1.5rem;
-    margin-bottom: -40px;
-}
-
-.page-title {
-    font-size: 2rem;
-    font-weight: bolder;
-    text-transform: uppercase;
-    letter-spacing: 0.75px;
-    color: var(--blue);
-}
-
-.page-header i {
-    color: var(--blue);
-    font-size: 1.8rem;
-}
-
 .top-header {
     position: fixed;
     top: 0;
@@ -61,7 +40,9 @@ body {
 
 .logo-container {
     grid-column: 1;
+    /*logo pada kolom pertama (kiri)*/
     justify-self: start;
+    /* logo rata kiri */
     padding: 0.5 rem 1.5rem;
     border-radius: 12px;
     background-color: #f8f8f8;
@@ -95,6 +76,7 @@ body {
 }
 
 .search-container input {
+    /* Untuk teks yang diketik */
     background: none;
     border: none;
     outline: none;
@@ -227,118 +209,71 @@ body {
     padding: 3rem 4rem;
     overflow-y: auto;
     color: var(--blue);
-    margin-top: 80px;
+    margin-top: 70px;
     margin-left: 225px;
 }
 
-.tabs {
-    display: flex;
-    gap: 30px;
-    border-bottom: 1px solid #ccc;
-    padding: 0 20px;
-    justify-content: center;
-    align-items: center;
+.field {
     margin-bottom: 20px;
-    margin-top: 20px;
 }
 
-.tab {
-    padding: 10px 0;
-    cursor: pointer;
+.field label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
     color: #01204E;
-    text-decoration: none;
-    font-weight: normal;
-    position: relative;
-    transition: all 0.3s ease;
 }
 
-.tab.active {
-    font-weight: bold;
-}
-
-.tab.active::after {
-    content: "";
-    position: absolute;
-    bottom: -1px;
-    left: 0;
+.placeholder {
+    background-color: #f1f3f5;
+    border-radius: 10px;
+    height: 40px;
     width: 100%;
-    height: 3px;
-    background-color: #01204E;
 }
 
-
-.tab:hover {
-    font-weight: bold;
-    color: #01204E;
-    transition: all 0.3s ease;
+.yesno-btn {
+    display: flex;
 }
 
-.tab:hover::after {
-    content: "";
-    position: absolute;
-    bottom: -1px;
-    left: 0;
-    width: 100%;
-    height: 3px;
-    background-color: gray;
-    transition: all 0.3s ease;
-}
-
-table {
-    width: 100%;
-    border-collapse: collapse;
-    background: white;
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-}
-
-
-thead {
-    background: #f2f4f7;
-    text-align: left;
-    font-weight: bold;
-}
-
-th,
-td {
-    padding: 14px 16px;
-    border-bottom: 1px solid #eee;
-    font-size: 14px;
-}
-
-
-tbody tr:hover {
-    background-color: #9bafce;
+.no-btn {
+    width: 50%;
+    float: left;
+    margin: 10px;
+    background-color: #f8f8f8;
+    color: #FF0000;
+    border-color: #FF0000;
+    border-radius: 10px;
+    padding: 8px;
     cursor: pointer;
-    font-weight: bold;
     transition: all 0.3s ease;
 }
 
-.status {
-    padding: 6px 12px;
-    border-radius: 12px;
-    font-size: 12px;
-    font-weight: bold;
-    display: inline-block;
+.yes-btn {
+    width: 50%;
+    float: right;
+    margin: 10px;
+    background-color: #f8f8f8;
+    color: #30AB68;
+    border-color: #30AB68;
+    border-radius: 10px;
+    padding: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
 }
 
-.menunggu {
-    background: #f8d7da;
-    color: #b71c1c;
+.no-btn:hover {
+    background-color: #f9d5d5;
 }
 
-.selesai {
-    background: #d1ecf1;
-    color: #0c5460;
+.yes-btn:hover {
+    background-color: #c5fcdd;
 }
 
-.sedang {
-    background: #fff3cd;
-    color: #856404;
-}
-
-.berjalan {
-    background: #e2e3e5;
-    color: #383d41;
+.box {
+    background-color: #f1f3f5;
+    border-radius: 10px;
+    height: auto;
+    padding: 10px;
+    width: 100%;
+    margin-top: 10px;
 }

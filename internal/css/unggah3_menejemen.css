@@ -236,25 +236,15 @@ body {
     width: 80%;
 }
 
-.progress-stepper::before,
-.progress-stepper::after {
+.progress-stepper::before {
     content: '';
     position: absolute;
     top: 12px;
     left: 0;
-    height: 2px;
-    z-index: 1;
-}
-
-.progress-stepper::before {
-    background-color: --white;
     right: 0;
-}
-
-.progress-stepper::after {
-    background-color: #01204e;
-    width: 50%;
-    z-index: 2;
+    height: 2px;
+    background-color: #dee2e6;
+    z-index: 1;
 }
 
 .step {
@@ -265,6 +255,11 @@ body {
     z-index: 3;
     background-color: var(--white);
     padding: 0 1rem;
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.step:hover {
+    transform: translateY(-4px);
 }
 
 .step .circle {
@@ -310,7 +305,6 @@ body {
     border-radius: 8px;
     padding: 1rem;
     min-height: 48px;
-    box-sizing: border-box;
     outline: none;
     border: 2px solid transparent;
 }

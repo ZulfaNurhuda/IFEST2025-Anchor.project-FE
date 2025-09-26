@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Anchor</title>
+    <link href="css/Dashboard_internal.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
+
+<body>
+
+    <header class="top-header">
+        <div class="logo-container">
+            <img src="assets/logo-pelindo.png" alt="Logo Pelindo">
+        </div>
+        <div class="search-container">
+            <input type="text" placeholder="Cari Kontrak ...">
+            <i class="fa-solid fa-filter filter-icon"></i>
+        </div>
+    </header>
+    <div class="main-container">
+        <nav class="sidebar">
+            <ul class="sidebar-menu">
+                <li><a href="#" class="active"><i class="fa-solid fa-grip active"></i> Beranda</a></li>
+                <li><a href="#"><i class="fa-solid fa-file-lines"></i> Dokumen</a></li>
+                <li><a href="#"><i class="fa-solid fa-bell"></i> Notifikasi</a></li>
+                <li><a href="#"><i class="fa-solid fa-clock-rotate-left"></i> Riwayat</a></li>
+                <li><a href="#"><i class="fa-solid fa-gear"></i> Pengaturan</a></li>
+            </ul>
+
+            <div class="sidebar-profile">
+                <img class="profile-img" src="assets/profile-picture.jpg" alt="Foto Profil Keisha">
+                <a href="#" class="profile-link">
+                    <span class="profile-name">Keisha Sakura</span>
+                </a>
+                <small class="profile-title">Tim Internal</small>
+            </div>
+        </nav>
+    </div>
+
+    <div class="main-content">
+
+        <p>Rata-rata Risiko Kontrak</p>
+        <div class="risiko-kontrak">
+
+            <div class="pie" style="--a:70; --b:20; --c:10;">
+                <div class="center">70%</div>
+            </div>
+
+            <div class="styled-table1">
+                <table>
+                    <tr>
+                        <th>Judul Dokumen</th>
+                        <th>Nama Perusahaan</th>
+                        <th>Risiko</th>
+                    </tr>
+                    <tr>
+                        <td>Perjanjian Logistik ABCD</td>
+                        <td>PT Mandiri Edukasi Indonesia</td>
+                        <td>95</td>
+                    </tr>
+                    <tr>
+                        <td>Perjanjian Angkutan Barang</td>
+                        <td>CV ABCDE</td>
+                        <td>93</td>
+                    </tr>
+                    <tr>
+                        <td>Perjanjian Kerja Sama</td>
+                        <td>PT Makmur Abadi</td>
+                        <td>90</td>
+                    </tr>
+                    <tr>
+                        <td>Perjanjian Kerja Bakti</td>
+                        <td>PT Sejahtera</td>
+                        <td>88</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <table class="info-table" border="1">
+            <tr>
+                <th colspan="2">Total Kontrak Aktif
+                    <p class="bignum">16</p>
+                </th>
+                <th rowspan="2">Total Nilai Kontrak
+                    <p>Seluruh Kontrak</p>
+                    <p class="bignum">Rp15.578.900,00</p>
+                    <p> </p>
+                    <p>Sudah Direalisasikan</p>
+                    <p class="bignum-yellow">70%</p>
+                </th>
+                <th rowspan="2">Kinerja Mitra
+                    <p>Rata-rata Kinerja</p>
+                    <p class="bignum-green">83%</p>
+                    <p></p>
+                    <p>Jumlah Pelanggaran</p>
+                    <p class="bignum-green">20</p>
+                </th>
+            </tr>
+            <tr>
+                <td>Belum ditinjau
+                    <p class="bignum">8</p>
+                </td>
+                <td>Sedang ditinjau
+                    <p class="bignum">5</p>
+                </td>
+            </tr>
+        </table>
+
+        <div class="page-header">
+            <i class="fa-solid fa-bell"></i>
+            <h1 class="page-title">NOTIFIKASI</h1>
+        </div>
+
+        <div class="notifications-list">
+            <article class="notification-item highlighted">
+                <p>Tenggat peninjauan kontrak dengan judul <strong>"Penyajian Penyimpanan dan Pengiriman Barang
+                        dengan PT Tepi"</strong> akan jatuh tempo 2 hari lagi</p>
+                <span class="timestamp">17:21 | 21/08/2025</span>
+            </article>
+            <article class="notification-item">
+                <p>Tenggat peninjauan kontrak dengan judul <strong>"Perjanjian Penempatan Kapal PT Aru di Pelabuhan
+                        Merapi"</strong> telah disubmit untuk ditinjau dengan tenggat peninjauan 30 November 2025
+                </p>
+                <span class="timestamp">10:32 | 21/08/2025</span>
+            </article>
+        </div>
+    </div>
+</body>
+
+</html>
