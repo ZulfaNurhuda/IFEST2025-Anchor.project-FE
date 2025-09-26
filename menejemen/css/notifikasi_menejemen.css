@@ -208,7 +208,7 @@ body {
     flex-grow: 1;
     background-color: var(--white);
     border-radius: 12px;
-    padding: 2rem;
+    padding: 3rem 4rem;
     overflow-y: auto;
     color: var(--blue);
     margin-top: 80px;
@@ -224,10 +224,8 @@ body {
 }
 
 .page-title {
-    font-size: 2rem;
-    font-weight: bolder;
-    text-transform: uppercase;
-    letter-spacing: 0.75px;
+    font-weight: 600;
+    padding: 0.5rem;
     color: var(--blue);
     padding-bottom: 1rem;
 }

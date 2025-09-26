@@ -233,20 +233,22 @@ body {
     display: flex;
     justify-content: space-between;
     position: relative;
-    margin-bottom: 3rem;
+    margin: 3rem auto;
+    width: 80%;
 }
 
 .progress-stepper::before {
     content: '';
     position: absolute;
-    top: 50%;
+    top: 12px;
     left: 0;
     right: 0;
     height: 2px;
     background-color: #dee2e6;
-    transform: translateY(-50%);
     z-index: 1;
 }
+
+
 
 .step {
     display: flex;
@@ -256,6 +258,11 @@ body {
     z-index: 2;
     background-color: var(--white);
     padding: 0 0.5rem;
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.step:hover {
+    transform: translateY(-4px);
 }
 
 .step .circle {
@@ -354,4 +361,10 @@ body {
     border-radius: 8px;
     font-weight: 600;
     cursor: pointer;
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.btn-upload:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
 }

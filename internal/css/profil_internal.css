@@ -196,6 +196,7 @@ body {
 .profile-title {
     display: block;
     font-size: 0.9rem;
+    padding: 0.5rem;
     color: var(--white);
 }
 
@@ -203,7 +204,7 @@ body {
     flex-grow: 1;
     background-color: var(--white);
     border-radius: 12px;
-    padding: 2.8rem 5rem;
+    padding: 3rem 4rem;
     overflow-y: auto;
     color: var(--blue);
     margin-top: 80px;

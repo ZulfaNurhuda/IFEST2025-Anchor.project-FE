@@ -225,14 +225,12 @@ body {
     margin-bottom: 3rem;
 }
 
-/* -- Progress Stepper -- */
 .progress-stepper {
     display: flex;
     justify-content: space-between;
     position: relative;
     margin: 3rem auto;
     width: 80%;
-    /* Lebar stepper */
 }
 
 .progress-stepper::before {
@@ -246,16 +244,14 @@ body {
     z-index: 1;
 }
 
-/* Garis progres biru */
 .progress-stepper::after {
     content: '';
     position: absolute;
     top: 12px;
     left: 0;
     height: 2px;
-    background-color: #01204e;
+    background-color: var(--blue);
     width: 50%;
-    /* 50% karena ada 2 dari 3 langkah yang aktif */
     z-index: 2;
     transition: width 0.3s ease;
 }
@@ -268,6 +264,11 @@ body {
     z-index: 3;
     background-color: var(--white);
     padding: 0 1rem;
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.step:hover {
+    transform: translateY(-4px);
 }
 
 .step .circle {
@@ -338,6 +339,12 @@ body {
     font-weight: 600;
     cursor: pointer;
     font-size: 0.9rem;
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.btn:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
 }
 
 .btn-primary {
@@ -347,6 +354,6 @@ body {
 
 .btn-secondary {
     background-color: #f8f9fa;
-    color: #495057;
-    border: 1px solid #dee2e6;
+    color: #28a745;
+    border: 1px solid #28a745;
 }
