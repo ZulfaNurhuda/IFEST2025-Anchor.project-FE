@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Kontrak - Anchor</title>
+    <link rel="stylesheet" href="css/profil.css">
+    <link href="sidebar-template.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Import Inter font and modern styles */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* Modern header styles */
+        .upload-page-header {
+            background: linear-gradient(135deg, #01204e, #0a2a6b);
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            color: white;
+            box-shadow: 0 4px 15px rgba(1, 32, 78, 0.2);
+        }
+
+        .header-title {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .header-title i {
+            font-size: 1.8rem;
+            opacity: 0.9;
+        }
+
+        .header-text h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .header-text span {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        /* Section styles */
+        .upload-section {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .section-header {
+            margin-bottom: 1.5rem;
+        }
+
+        .section-header h3 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #01204e;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .section-header i {
+            color: #01204e;
+            opacity: 0.8;
+        }
+
+        .upload-container {
+            max-width: 800px;
+            margin: 0;
+            padding: 0;
+            background: transparent;
+            border-radius: 0;
+            box-shadow: none;
+        }
+
+        .upload-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            padding: 12px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #007bff;
+        }
+
+        .file-upload {
+            border: 2px dashed #007bff;
+            border-radius: 8px;
+            padding: 40px;
+            text-align: center;
+            background: #f8f9fa;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .file-upload:hover {
+            background: #e9ecef;
+        }
+
+        .file-upload.dragover {
+            border-color: #28a745;
+            background: #d4edda;
+        }
+
+        .file-upload i {
+            font-size: 48px;
+            color: #007bff;
+            margin-bottom: 16px;
+        }
+
+        .upload-btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .upload-btn:hover {
+            background: #0056b3;
+        }
+
+        .upload-btn:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+        }
+
+        .metadata-section {
+            border: 1px solid #e1e5e9;
+            border-radius: 8px;
+            padding: 20px;
+            background: #f8f9fa;
+        }
+
+        .metadata-section h3 {
+            margin-top: 0;
+            color: #495057;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header class="top-header">
+        <div class="logo-container">
+            <img src="assets/logo-pelindo.png" alt="Logo Pelindo">
+        </div>
+        <div class="search-container">
+            <input type="text" placeholder="Cari Kontrak ...">
+            <i class="fa-solid fa-filter filter-icon"></i>
+        </div>
+    </header>
+
+    <div class="main-container">
+        <nav class="sidebar">
+            <ul class="sidebar-menu">
+                <li><a href="dashboard.html"><i class="fa-solid fa-grip"></i> Beranda</a></li>
+                <li><a href="dokumen_all.html" class="active"><i class="fa-solid fa-file-lines active"></i> Dokumen</a></li>
+                <li><a href="notifikasi.html"><i class="fa-solid fa-bell"></i> Notifikasi</a></li>
+                <li><a href="riwayat.html"><i class="fa-solid fa-clock-rotate-left"></i> Riwayat</a></li>
+                <li><a href="profil.html"><i class="fa-solid fa-gear"></i> Pengaturan</a></li>
+            </ul>
+
+            <div class="sidebar-profile">
+                <img class="profile-img" src="assets/profile-picture.jpg" alt="Foto Profil">
+                <a href="profil.html" class="profile-link">
+                    <span class="profile-name">User</span>
+                </a>
+                <small class="profile-title">Tim Internal</small>
+                <button onclick="window.auth.logout()" style="background: none; border: none; color: #fff; cursor: pointer; font-size: 12px; margin-top: 5px;">
+                    <i class="fa-solid fa-sign-out-alt"></i> Logout
+                </button>
+            </div>
+        </nav>
+    </div>
+
+    <main class="main-content">
+        <div class="upload-page-header">
+            <div class="header-text">
+                <div class="header-title">
+                    <i class="fa-solid fa-cloud-upload-alt"></i>
+                    <h2>Upload Kontrak</h2>
+                </div>
+                <span id="currentDate">Loading...</span>
+            </div>
+        </div>
+
+        <div class="upload-section">
+            <div class="section-header">
+                <h3><i class="fa-solid fa-file-upload"></i> Upload Kontrak Baru</h3>
+            </div>
+            <form id="uploadForm" class="upload-form">
+                <div class="form-group">
+                    <div class="file-upload" id="fileUpload">
+                        <i class="fa-solid fa-cloud-upload-alt"></i>
+                        <h3>Drop file di sini atau klik untuk memilih</h3>
+                        <p>Format yang didukung: PDF, DOC, DOCX (Maksimal 20MB)</p>
+                        <input type="file" id="fileInput" accept=".pdf,.doc,.docx" style="display: none;" required>
+                    </div>
+                    <div id="selectedFile" style="display: none; margin-top: 10px; padding: 10px; background: #d4edda; border-radius: 5px;">
+                        <i class="fa-solid fa-file"></i> <span id="fileName"></span>
+                        <button type="button" onclick="clearFile()" style="float: right; background: none; border: none; color: #721c24; cursor: pointer;">×</button>
+                    </div>
+                </div>
+
+                <div class="metadata-section">
+                    <h3><i class="fa-solid fa-info-circle"></i> Informasi Kontrak</h3>
+
+                    <div class="form-group">
+                        <label for="title">Judul Kontrak *</label>
+                        <input type="text" id="title" required placeholder="Masukkan judul kontrak">
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="parties">Pihak Terkait *</label>
+                            <input type="text" id="parties" required placeholder="Nama perusahaan/organisasi">
+                        </div>
+                        <div class="form-group">
+                            <label for="value">Nilai Kontrak (Rp)</label>
+                            <input type="number" id="value" placeholder="0">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="effectiveDate">Tanggal Berlaku</label>
+                            <input type="date" id="effectiveDate">
+                        </div>
+                        <div class="form-group">
+                            <label for="jurisdiction">Yurisdiksi</label>
+                            <select id="jurisdiction">
+                                <option value="">Pilih yurisdiksi</option>
+                                <option value="Indonesia">Indonesia</option>
+                                <option value="Jakarta">DKI Jakarta</option>
+                                <option value="Surabaya">Surabaya</option>
+                                <option value="Medan">Medan</option>
+                                <option value="Makassar">Makassar</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="description">Deskripsi Tambahan</label>
+                        <textarea id="description" rows="3" placeholder="Deskripsi singkat tentang kontrak ini..."></textarea>
+                    </div>
+                </div>
+
+                <button type="submit" class="upload-btn" id="uploadBtn">
+                    <i class="fa-solid fa-upload"></i> Upload Kontrak
+                </button>
+            </form>
+        </div>
+    </main>
+
+    <script src="assets/js/api.js"></script>
+    <script src="assets/js/ui.js"></script>
+    <script>
+        let selectedFile = null;
+
+        // File upload handling
+        const fileUpload = document.getElementById('fileUpload');
+        const fileInput = document.getElementById('fileInput');
+        const selectedFileDiv = document.getElementById('selectedFile');
+        const fileName = document.getElementById('fileName');
+
+        fileUpload.addEventListener('click', () => fileInput.click());
+        fileUpload.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            fileUpload.classList.add('dragover');
+        });
+        fileUpload.addEventListener('dragleave', () => {
+            fileUpload.classList.remove('dragover');
+        });
+        fileUpload.addEventListener('drop', (e) => {
+            e.preventDefault();
+            fileUpload.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                handleFileSelect(files[0]);
+            }
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleFileSelect(e.target.files[0]);
+            }
+        });
+
+        function handleFileSelect(file) {
+            // Validate file type
+            const allowedTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+            if (!allowedTypes.includes(file.type)) {
+                window.ui.displayError('Format file tidak didukung. Gunakan PDF, DOC, atau DOCX.');
+                return;
+            }
+
+            // Validate file size (20MB)
+            if (file.size > 20 * 1024 * 1024) {
+                window.ui.displayError('Ukuran file terlalu besar. Maksimal 20MB.');
+                return;
+            }
+
+            selectedFile = file;
+            fileName.textContent = file.name;
+            selectedFileDiv.style.display = 'block';
+            fileUpload.style.display = 'none';
+        }
+
+        function clearFile() {
+            selectedFile = null;
+            fileInput.value = '';
+            selectedFileDiv.style.display = 'none';
+            fileUpload.style.display = 'block';
+        }
+
+        // Form submission
+        document.getElementById('uploadForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            if (!selectedFile) {
+                window.ui.displayError('Pilih file kontrak terlebih dahulu');
+                return;
+            }
+
+            const uploadBtn = document.getElementById('uploadBtn');
+            const originalText = uploadBtn.innerHTML;
+
+            try {
+                window.ui.showLoading(uploadBtn);
+
+                // Create FormData
+                const formData = new FormData();
+                formData.append('file', selectedFile);
+
+                // Add metadata
+                const metadata = {
+                    title: document.getElementById('title').value,
+                    parties: [document.getElementById('parties').value],
+                    value: parseFloat(document.getElementById('value').value) || 0,
+                    effectiveDate: document.getElementById('effectiveDate').value || null,
+                    jurisdiction: document.getElementById('jurisdiction').value || null
+                };
+
+                Object.keys(metadata).forEach(key => {
+                    if (metadata[key] !== null && metadata[key] !== '') {
+                        formData.append(`metadata[${key}]`,
+                            Array.isArray(metadata[key]) ? JSON.stringify(metadata[key]) : metadata[key]
+                        );
+                    }
+                });
+
+                const response = await window.api.uploadContract(formData);
+
+                if (response.success) {
+                    window.ui.displaySuccess('Kontrak berhasil diupload!');
+
+                    // Reset form
+                    document.getElementById('uploadForm').reset();
+                    clearFile();
+
+                    // Redirect to document list after delay
+                    setTimeout(() => {
+                        window.location.href = 'dokumen_all.html';
+                    }, 2000);
+                } else {
+                    throw new Error(response.message || 'Upload gagal');
+                }
+            } catch (error) {
+                window.ui.displayError(error.message || 'Gagal mengupload kontrak');
+            } finally {
+                window.ui.hideLoading(uploadBtn, originalText);
+            }
+        });
+
+        // Auto-populate title from filename
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0 && !document.getElementById('title').value) {
+                const filename = e.target.files[0].name;
+                const titleWithoutExt = filename.substring(0, filename.lastIndexOf('.')) || filename;
+                document.getElementById('title').value = titleWithoutExt;
+            }
+        });
+
+        function updateCurrentDate() {
+            const options = {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                timeZone: 'Asia/Jakarta'
+            };
+            const currentDate = new Date().toLocaleDateString('id-ID', options);
+            document.getElementById('currentDate').textContent = currentDate;
+        }
+
+        // Initialize date on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            updateCurrentDate();
+        });
+    </script>
+</body>
+</html>

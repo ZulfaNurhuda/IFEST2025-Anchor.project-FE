@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dokumen - Aplikasi Kontrak</title>
+    <link rel="stylesheet" href="css/profil.css">
+    <link rel="stylesheet" href="dokumen_all.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
+
+<body>
+    <header class="top-header">
+        <div class="logo-container">
+            <img src="assets/logo-pelindo.png" alt="Logo Pelindo">
+        </div>
+        <div class="search-container">
+            <input type="text" placeholder="Cari Kontrak">
+            <i class="fa-solid fa-filter filter-icon"></i>
+        </div>
+    </header>
+    <div class="main-container">
+        <nav class="sidebar">
+            <ul class="sidebar-menu">
+                <li><a href="dashboard.html"><i class="fa-solid fa-grip"></i> Beranda</a></li>
+                <li><a href="dokumen_all.html" class="active"><i class="fa-solid fa-file-lines active"></i> Dokumen</a></li>
+                <li><a href="notifikasi.html"><i class="fa-solid fa-bell"></i> Notifikasi</a></li>
+                <li><a href="riwayat.html"><i class="fa-solid fa-clock-rotate-left"></i> Riwayat</a></li>
+                <li><a href="profil.html"><i class="fa-solid fa-gear"></i> Pengaturan</a></li>
+            </ul>
+
+            <div class="sidebar-profile">
+                <img class="profile-img" src="assets/profile-picture.jpg" alt="Foto Profil">
+                <a href="profil.html" class="profile-link">
+                    <span class="profile-name">User</span>
+                </a>
+                <small class="profile-title">Tim Internal</small>
+                <button onclick="window.auth.logout()" style="background: none; border: none; color: #fff; cursor: pointer; font-size: 12px; margin-top: 5px;">
+                    <i class="fa-solid fa-sign-out-alt"></i> Logout
+                </button>
+            </div>
+        </nav>
+
+        <main class="main-content">
+            <!-- Documents Page Header -->
+            <div class="dokumen-page-header">
+                <div class="header-text">
+                    <div class="header-title">
+                        <i class="fa-solid fa-file-lines"></i>
+                        <h2>Dokumen Kontrak</h2>
+                    </div>
+                    <span id="currentDate">Loading...</span>
+                </div>
+                <button onclick="window.location.href='upload.html'" class="btn-upload">
+                    <i class="fa-solid fa-plus"></i> Upload Kontrak
+                </button>
+            </div>
+    
+            <!-- Documents Section -->
+            <div class="dokumen-section">
+                <div class="section-header">
+                    <h3><i class="fa-solid fa-folder-open"></i> Daftar Dokumen</h3>
+                </div>
+                <div class="tabs">
+                <a href="#" class="tab active" data-status="all">Semua</a>
+                <a href="#" class="tab" data-status="draft">Menunggu ditinjau</a>
+                <a href="#" class="tab" data-status="in_review">Sedang ditinjau</a>
+                <a href="#" class="tab" data-status="approved">Selesai ditinjau</a>
+                <a href="#" class="tab" data-status="active">Sedang berlangsung</a>
+                </div>
+
+                <table id="documentsTable">
+                <thead>
+                <tr>
+                    <th onclick="sortTable('title')">Judul Dokumen <i class="fa-solid fa-sort"></i></th>
+                    <th onclick="sortTable('parties')">Nama Instansi <i class="fa-solid fa-sort"></i></th>
+                    <th onclick="sortTable('createdAt')">Tanggal diunggah <i class="fa-solid fa-sort"></i></th>
+                    <th onclick="sortTable('reviewDeadline')">Tenggat ditinjau <i class="fa-solid fa-sort"></i></th>
+                    <th>Status</th>
+                    <th>Aksi</th>
+                </tr>
+                </thead>
+                <tbody id="documentsTableBody">
+                    <!-- Data akan dimuat secara dinamis -->
+                    <tr>
+                        <td colspan="6" style="text-align: center; padding: 40px;">
+                            <i class="fa-solid fa-spinner fa-spin"></i> Memuat data...
+                        </td>
+                    </tr>
+                </tbody>
+                </table>
+
+                <div id="pagination" class="pagination-container"></div>
+            </div>
+        </main>
+    </div>
+
+
+    
+
+    <script src="assets/js/api.js"></script>
+    <script src="assets/js/ui.js"></script>
+    <script>
+        let currentPage = 1;
+        let currentFilter = 'all';
+        let currentSort = { field: 'createdAt', order: 'desc' };
+        let searchQuery = '';
+
+        async function loadDocuments() {
+            try {
+                const params = {
+                    page: currentPage,
+                    limit: 10,
+                    sortBy: currentSort.field,
+                    order: currentSort.order
+                };
+
+                if (currentFilter !== 'all') {
+                    if (currentFilter === 'in_review') {
+                        params.status = 'in_review_legal,in_review_management';
+                    } else {
+                        params.status = currentFilter;
+                    }
+                }
+
+                if (searchQuery) {
+                    params.search = searchQuery;
+                }
+
+                const response = await window.api.getContracts(params);
+                displayDocuments(response.contracts || []);
+                updatePagination(response.pagination?.totalPages || 1, response.pagination?.currentPage || 1);
+            } catch (error) {
+                console.error('Failed to load documents:', error);
+                document.getElementById('documentsTableBody').innerHTML = `
+                    <tr>
+                        <td colspan="6" style="text-align: center; padding: 40px; color: #dc3545;">
+                            <i class="fa-solid fa-exclamation-triangle"></i> Gagal memuat data
+                        </td>
+                    </tr>
+                `;
+            }
+        }
+
+        function displayDocuments(contracts) {
+            const tbody = document.getElementById('documentsTableBody');
+
+            if (contracts.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6" style="text-align: center; padding: 40px;">
+                            <i class="fa-solid fa-folder-open"></i><br>
+                            Tidak ada dokumen ditemukan
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = contracts.map(contract => {
+                const title = contract.metadata?.title || contract.filename;
+                const parties = contract.metadata?.parties?.[0] || 'N/A';
+                const uploadDate = window.utils.formatDate(contract.createdAt);
+                const reviewDeadline = contract.reviewDeadline ? window.utils.formatDate(contract.reviewDeadline) : '-';
+                const status = getStatusInfo(contract.status);
+
+                return `
+                    <tr>
+                        <td title="${title}">${title.length > 50 ? title.substring(0, 50) + '...' : title}</td>
+                        <td>${parties}</td>
+                        <td>${uploadDate}</td>
+                        <td>${reviewDeadline}</td>
+                        <td><span class="status ${status.class}">${status.text}</span></td>
+                        <td>
+                            <button onclick="viewDocument('${contract._id}')" class="action-btn view" title="Lihat">
+                                <i class="fa-solid fa-eye"></i>
+                            </button>
+                            <button onclick="downloadDocument('${contract._id}', '${contract.filename}')" class="action-btn download" title="Download">
+                                <i class="fa-solid fa-download"></i>
+                            </button>
+                            ${canEdit(contract) ? `<button onclick="editDocument('${contract._id}')" class="action-btn edit" title="Edit"><i class="fa-solid fa-edit"></i></button>` : ''}
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function getStatusInfo(status) {
+            const statusMap = {
+                'draft': { class: 'menunggu', text: 'Menunggu ditinjau' },
+                'in_review_legal': { class: 'sedang', text: 'Sedang ditinjau (Legal)' },
+                'in_review_management': { class: 'sedang', text: 'Sedang ditinjau (Manajemen)' },
+                'approved': { class: 'selesai', text: 'Disetujui' },
+                'rejected': { class: 'ditolak', text: 'Ditolak' },
+                'active': { class: 'berjalan', text: 'Sedang berlangsung' }
+            };
+            return statusMap[status] || { class: 'unknown', text: status };
+        }
+
+        function canEdit(contract) {
+            const userInfo = window.auth.getUserInfo();
+            return userInfo && (userInfo.role === 'internal' && contract.status === 'draft');
+        }
+
+        async function viewDocument(id) {
+            try {
+                const contract = await window.api.getContract(id);
+                // Show contract details in modal or navigate to detail page
+                alert(`Viewing: ${contract.metadata?.title || contract.filename}`);
+            } catch (error) {
+                window.ui.displayError('Gagal memuat detail dokumen');
+            }
+        }
+
+        async function downloadDocument(id, filename) {
+            try {
+                const blob = await window.api.downloadContract(id);
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+            } catch (error) {
+                window.ui.displayError('Gagal mendownload dokumen');
+            }
+        }
+
+        function editDocument(id) {
+            // Navigate to edit page or open edit modal
+            window.location.href = `edit.html?id=${id}`;
+        }
+
+        function updatePagination(totalPages, currentPageNum) {
+            const container = document.getElementById('pagination');
+            if (totalPages <= 1) {
+                container.innerHTML = '';
+                return;
+            }
+
+            window.ui.createPagination(container, currentPageNum, totalPages, (page) => {
+                currentPage = page;
+                loadDocuments();
+            });
+        }
+
+        function sortTable(field) {
+            if (currentSort.field === field) {
+                currentSort.order = currentSort.order === 'asc' ? 'desc' : 'asc';
+            } else {
+                currentSort.field = field;
+                currentSort.order = 'asc';
+            }
+            currentPage = 1;
+            loadDocuments();
+        }
+
+        // Tab filtering
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', (e) => {
+                e.preventDefault();
+
+                // Update active tab
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+
+                // Update filter
+                currentFilter = tab.dataset.status;
+                currentPage = 1;
+                loadDocuments();
+            });
+        });
+
+        // Search functionality
+        const searchInput = document.querySelector('.search-container input');
+        let searchTimeout;
+        searchInput.addEventListener('input', (e) => {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                searchQuery = e.target.value;
+                currentPage = 1;
+                loadDocuments();
+            }, 300);
+        });
+
+        function loadNotifications() {
+            alert('Fitur notifikasi akan segera tersedia!');
+        }
+
+        function loadHistory() {
+            alert('Fitur riwayat akan segera tersedia!');
+        }
+
+        function updateCurrentDate() {
+            const options = {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                timeZone: 'Asia/Jakarta'
+            };
+            const currentDate = new Date().toLocaleDateString('id-ID', options);
+            document.getElementById('currentDate').textContent = currentDate;
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            updateCurrentDate();
+            loadDocuments();
+        });
+    </script>
+
+    <style>
+        .pagination-container {
+            margin: 20px 0;
+            display: flex;
+            justify-content: center;
+        }
+
+        .action-btn {
+            background: none;
+            border: 1px solid #ddd;
+            padding: 5px 8px;
+            margin: 0 2px;
+            border-radius: 3px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .action-btn:hover {
+            background: #f5f5f5;
+        }
+
+        .action-btn.view { color: #007bff; }
+        .action-btn.download { color: #28a745; }
+        .action-btn.edit { color: #ffc107; }
+
+        .action-btn.view:hover { background: #e3f2fd; }
+        .action-btn.download:hover { background: #e8f5e8; }
+        .action-btn.edit:hover { background: #fff8e1; }
+
+        .status.ditolak {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        th {
+            cursor: pointer;
+            user-select: none;
+        }
+
+        th:hover {
+            background: #f5f5f5;
+        }
+
+        /* Fix main content spacing for consistent layout */
+        .main-content {
+            padding-top: 30px !important;
+            margin-left: 245px !important;
+            margin-top: 80px !important;
+            padding-left: 30px;
+            padding-right: 30px;
+            min-height: calc(100vh - 80px);
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Ensure sidebar is properly positioned */
+        .sidebar {
+            z-index: 100;
+        }
+
+        /* Fix page header spacing */
+        .page-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            margin-bottom: 20px;
+            padding: 0;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .page-header h1 {
+            margin: 0;
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--blue, #01204e);
+        }
+
+        .page-header i {
+            color: var(--blue, #01204e);
+            font-size: 1.8rem;
+        }
+
+        .btn-upload {
+            background: linear-gradient(135deg, #007bff, #0056b3);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0, 123, 255, 0.2);
+        }
+
+        .btn-upload:hover {
+            background: linear-gradient(135deg, #0056b3, #004085);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0, 123, 255, 0.3);
+        }
+
+        .btn-upload i {
+            margin-right: 6px;
+        }
+
+        /* Fix tabs spacing */
+        .tabs {
+            margin-bottom: 30px;
+        }
+
+        /* Table improvements */
+        #documentsTable {
+            margin-top: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        #documentsTable th {
+            background-color: #01204e;
+            color: white;
+            padding: 15px;
+            font-weight: 600;
+        }
+
+        #documentsTable td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        #documentsTable tr:hover {
+            background-color: #f8f9fa;
+        }
+    </style>
+</body>
+
+</html>

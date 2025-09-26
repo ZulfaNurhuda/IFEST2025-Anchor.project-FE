@@ -41,9 +41,7 @@ body {
 
 .logo-container {
     grid-column: 1;
-    /*logo pada kolom pertama (kiri)*/
     justify-self: start;
-    /* logo rata kiri */
     padding: 0.5 rem 1.5rem;
     border-radius: 12px;
     background-color: #f8f8f8;
@@ -64,7 +62,6 @@ body {
 .search-container {
     position: relative;
     grid-column: 2;
-
     padding: 0.6 1rem;
     display: flex;
     align-items: center;
@@ -77,7 +74,6 @@ body {
 }
 
 .search-container input {
-    /* Untuk teks yang diketik */
     background: none;
     border: none;
     outline: none;
@@ -193,7 +189,7 @@ body {
 }
 
 .profile-name {
-    font-weight: 700;
+    font-weight: 1000;
     font-size: 1.1rem;
     color: var(--white);
 }
@@ -208,7 +204,7 @@ body {
     flex-grow: 1;
     background-color: var(--white);
     border-radius: 12px;
-    padding: 3rem 4rem;
+    padding: 2.8rem 5rem;
     overflow-y: auto;
     color: var(--blue);
     margin-top: 80px;
@@ -216,127 +212,76 @@ body {
     min-height: calc(100vh - 80px);
 }
 
-.page-header {
+.profile-page-header {
+    text-align: right;
+}
+
+.profile-page-header h2 {
+    margin: 0;
+    font-size: 2rem;
+    color: #212529;
+}
+
+.profile-page-header span {
+    color: #6c757d;
+    font-size: 1.1rem;
+}
+
+.btn-edit {
+    background-color: #01204e;
+    color: #ffffff;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-left: auto;
+}
+
+.profile-identity {
     display: flex;
     align-items: center;
-    gap: 1rem;
-    margin-left: 1.5rem;
+    gap: 1.5rem;
+    padding: 2rem 0;
 }
 
-.page-title {
-    font-weight: 600;
-    color: var(--blue);
-    padding: 0.5rem;
-    padding-bottom: 1rem;
+.profile-identity img {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
 }
 
-.page-header i {
-    color: var(--blue);
-    font-size: 1.8rem;
-    margin-bottom: 0.6rem;
-}
-
-.activity-list {
-    width: 100%;
-}
-
-.activity-list-header,
-.activity-item {
-    display: grid;
-    grid-template-columns: 2fr 5fr 2fr;
-    /* Proporsi kolom */
-    align-items: center;
-    gap: 1rem;
-    padding: 1rem;
-}
-
-.activity-list-header .header-item:nth-child(3) {
-    text-align: center;
-}
-
-.activity-list-header {
-    color: #6c757d;
-    font-weight: 600;
-    font-size: 0.9rem;
-    border-bottom: 2px solid #dee2e6;
-    margin-bottom: 0.5rem;
-}
-
-.activity-item {
-    background-color: #f8f9fa;
-    border-radius: 12px;
-    margin-bottom: 1rem;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+.profile-identity h3 {
+    margin: 0 0 0.25rem 0;
+    font-size: 1.5rem;
     color: #212529;
-    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
 }
 
-.activity-document {
-    font-weight: 500;
+.profile-identity p {
+    margin: 0;
+    color: #6c757d;
 }
 
-.activity-date {
-    font-size: 0.9rem;
-    text-align: center;
+.profile-details {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem 2rem;
+    padding-top: 2rem;
+}
+
+.info-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #6c757d;
+    font-size: 1rem;
+}
+
+.info-box {
+    background-color: #f1f3f5;
+    padding: 1rem;
+    border-radius: 8px;
+    font-style: italic;
+    font-size: 0.85rem;
     color: #495057;
-}
-
-.badge {
-    display: inline-block;
-    padding: 0.5rem 1rem;
-    border-radius: 20px;
-    font-size: 0.8rem;
-    font-weight: 600;
-    color: #fff;
-    min-width: 215px;
-    text-align: center;
-}
-
-.status-approved {
-    background-color: #28a745;
-}
-
-.status-comment {
-    background-color: #17a2b8;
-}
-
-.status-edited {
-    background-color: #F6BD18;
-    color: white;
-}
-
-.status-rejected {
-    background-color: #dc3545;
-}
-
-
-.status-submitted {
-    background-color: #FEC89A;
-    color: #A56D3B;
-}
-
-.status-requested {
-    background-color: #FF6518;
-    color: white;
-}
-
-.status-added {
-    background-color: #DB43B7;
-    color: whit;
-}
-
-.status-analyzed {
-    background-color: #6F42C1;
-    color: white;
-}
-
-.status-opened {
-    background-color: #948F8F;
-    color: white;
-}
-
-.activity-item:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-    cursor: pointer;
 }

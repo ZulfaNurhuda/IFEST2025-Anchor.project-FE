@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notifikasi - Aplikasi Kontrak</title>
+    <link rel="stylesheet" href="css/profil.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
+
+<body>
+    <header class="top-header">
+        <div class="logo-container">
+            <img src="assets/logo-pelindo.png" alt="Logo Pelindo">
+        </div>
+        <div class="search-container">
+            <input type="text" placeholder="Cari Notifikasi">
+            <i class="fa-solid fa-filter filter-icon"></i>
+        </div>
+    </header>
+    <div class="main-container">
+        <nav class="sidebar">
+            <ul class="sidebar-menu">
+                <li><a href="dashboard.html"><i class="fa-solid fa-grip"></i> Beranda</a></li>
+                <li><a href="dokumen_all.html"><i class="fa-solid fa-file-lines"></i> Dokumen</a></li>
+                <li><a href="notifikasi.html" class="active"><i class="fa-solid fa-bell active"></i> Notifikasi</a></li>
+                <li><a href="riwayat.html"><i class="fa-solid fa-clock-rotate-left"></i> Riwayat</a></li>
+                <li><a href="profil.html"><i class="fa-solid fa-gear"></i> Pengaturan</a></li>
+            </ul>
+
+            <div class="sidebar-profile">
+                <img class="profile-img" src="assets/profile-picture.jpg" alt="Foto Profil">
+                <a href="profil.html" class="profile-link">
+                    <span class="profile-name">User</span>
+                </a>
+                <small class="profile-title">Tim Internal</small>
+                <button onclick="window.auth.logout()" style="background: none; border: none; color: #fff; cursor: pointer; font-size: 12px; margin-top: 5px;">
+                    <i class="fa-solid fa-sign-out-alt"></i> Logout
+                </button>
+            </div>
+        </nav>
+
+        <main class="main-content">
+            <!-- Notifications Page Header -->
+            <div class="notifikasi-page-header">
+                <div class="header-text">
+                    <div class="header-title">
+                        <i class="fa-solid fa-bell"></i>
+                        <h2>Notifikasi</h2>
+                    </div>
+                    <span id="currentDate">Loading...</span>
+                </div>
+                <button onclick="markAllAsRead()" class="btn-mark-read">
+                    <i class="fa-solid fa-check-double"></i> Tandai Semua Dibaca
+                </button>
+            </div>
+
+            <!-- Notifications Section -->
+            <div class="notifikasi-section">
+                <div class="section-header">
+                    <h3><i class="fa-solid fa-list"></i> Daftar Notifikasi</h3>
+                </div>
+                <div class="notification-filters">
+                <button class="filter-btn active" data-filter="all">Semua</button>
+                <button class="filter-btn" data-filter="unread">Belum Dibaca</button>
+                <button class="filter-btn" data-filter="contracts">Kontrak</button>
+                <button class="filter-btn" data-filter="reviews">Review</button>
+                <button class="filter-btn" data-filter="system">Sistem</button>
+                </div>
+
+                <div class="notifications-container" id="notificationsContainer">
+                <!-- Notifications will be loaded dynamically -->
+                <div class="loading-state">
+                    <i class="fa-solid fa-spinner fa-spin"></i> Memuat notifikasi...
+                </div>
+                </div>
+
+                <div id="pagination" class="pagination-container"></div>
+            </div>
+        </main>
+    </div>
+
+    <script src="assets/js/api.js"></script>
+    <script src="assets/js/ui.js"></script>
+    <script>
+        let currentPage = 1;
+        let currentFilter = 'all';
+        let searchQuery = '';
+
+        async function loadNotifications() {
+            try {
+                const params = {
+                    page: currentPage,
+                    limit: 10,
+                    filter: currentFilter !== 'all' ? currentFilter : undefined,
+                    search: searchQuery || undefined
+                };
+
+                const response = await window.api.getNotifications(params);
+                displayNotifications(response.notifications || []);
+                updatePagination(response.pagination?.totalPages || 1, response.pagination?.currentPage || 1);
+            } catch (error) {
+                console.error('Failed to load notifications:', error);
+                document.getElementById('notificationsContainer').innerHTML = `
+                    <div class="error-state">
+                        <i class="fa-solid fa-exclamation-triangle"></i>
+                        <p>Gagal memuat notifikasi</p>
+                        <button onclick="loadNotifications()" class="btn-retry">Coba Lagi</button>
+                    </div>
+                `;
+            }
+        }
+
+        function displayNotifications(notifications) {
+            const container = document.getElementById('notificationsContainer');
+
+            if (notifications.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fa-solid fa-bell-slash"></i>
+                        <p>Tidak ada notifikasi</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = notifications.map(notif => {
+                const icon = getNotificationIcon(notif.type);
+                const timeAgo = window.utils.formatTimeAgo(notif.createdAt);
+
+                return `
+                    <div class="notification-item ${notif.read ? '' : 'unread'}" data-id="${notif._id}">
+                        <div class="notification-icon ${notif.type}">
+                            <i class="${icon}"></i>
+                        </div>
+                        <div class="notification-content">
+                            <div class="notification-header">
+                                <h4>${notif.title}</h4>
+                                <span class="notification-time">${timeAgo}</span>
+                            </div>
+                            <p class="notification-message">${notif.message}</p>
+                            ${notif.actionUrl ? `<a href="${notif.actionUrl}" class="notification-action">Lihat Detail</a>` : ''}
+                        </div>
+                        ${!notif.read ? '<div class="unread-indicator"></div>' : ''}
+                        <button onclick="markAsRead('${notif._id}')" class="btn-mark-read-single" title="Tandai dibaca">
+                            <i class="fa-solid fa-check"></i>
+                        </button>
+                    </div>
+                `;
+            }).join('');
+
+            // Add click handlers for marking as read
+            document.querySelectorAll('.notification-item.unread').forEach(item => {
+                item.addEventListener('click', () => {
+                    markAsRead(item.dataset.id);
+                });
+            });
+        }
+
+        function getNotificationIcon(type) {
+            const iconMap = {
+                'contract': 'fa-solid fa-file-contract',
+                'review': 'fa-solid fa-magnifying-glass',
+                'approval': 'fa-solid fa-check-circle',
+                'rejection': 'fa-solid fa-times-circle',
+                'deadline': 'fa-solid fa-clock',
+                'system': 'fa-solid fa-cog'
+            };
+            return iconMap[type] || 'fa-solid fa-bell';
+        }
+
+        async function markAsRead(notificationId) {
+            try {
+                await window.api.markNotificationAsRead(notificationId);
+                loadNotifications(); // Refresh the list
+            } catch (error) {
+                window.ui.displayError('Gagal menandai notifikasi sebagai dibaca');
+            }
+        }
+
+        async function markAllAsRead() {
+            try {
+                await window.api.markAllNotificationsAsRead();
+                loadNotifications(); // Refresh the list
+                window.ui.displaySuccess('Semua notifikasi telah ditandai sebagai dibaca');
+            } catch (error) {
+                window.ui.displayError('Gagal menandai semua notifikasi sebagai dibaca');
+            }
+        }
+
+        function updatePagination(totalPages, currentPageNum) {
+            const container = document.getElementById('pagination');
+            if (totalPages <= 1) {
+                container.innerHTML = '';
+                return;
+            }
+
+            window.ui.createPagination(container, currentPageNum, totalPages, (page) => {
+                currentPage = page;
+                loadNotifications();
+            });
+        }
+
+        // Filter functionality
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                // Update active filter
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+
+                // Update filter and reload
+                currentFilter = btn.dataset.filter;
+                currentPage = 1;
+                loadNotifications();
+            });
+        });
+
+        // Search functionality
+        const searchInput = document.querySelector('.search-container input');
+        let searchTimeout;
+        searchInput.addEventListener('input', (e) => {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                searchQuery = e.target.value;
+                currentPage = 1;
+                loadNotifications();
+            }, 300);
+        });
+
+        function updateCurrentDate() {
+            const options = {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                timeZone: 'Asia/Jakarta'
+            };
+            const currentDate = new Date().toLocaleDateString('id-ID', options);
+            document.getElementById('currentDate').textContent = currentDate;
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            updateCurrentDate();
+            loadNotifications();
+        });
+    </script>
+
+    <style>
+        /* Modern Notifikasi Section Styles - matching profil.html */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+        .main-content {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8f9fa;
+        }
+
+        .notifikasi-page-header {
+            background: linear-gradient(135deg, #01204e, #0a2a6b);
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            color: white;
+            box-shadow: 0 4px 15px rgba(1, 32, 78, 0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        .header-title {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .header-title i {
+            font-size: 1.8rem;
+            opacity: 0.9;
+        }
+
+        .header-text h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .header-text span {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        .btn-mark-read {
+            background-color: white;
+            color: #01204e;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-mark-read:hover {
+            background-color: #f8f9fa;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(255, 255, 255, 0.3);
+        }
+
+        .notifikasi-section {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .notifikasi-section .section-header {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #e1e5e9;
+        }
+
+        .notifikasi-section .section-header h3 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #01204e;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .notifikasi-section .section-header h3 i {
+            font-size: 1.2rem;
+            opacity: 0.8;
+        }
+
+        .btn-mark-read {
+            background: linear-gradient(135deg, #28a745, #1e7e34);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(40, 167, 69, 0.2);
+        }
+
+        .btn-mark-read:hover {
+            background: linear-gradient(135deg, #1e7e34, #155724);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(40, 167, 69, 0.3);
+        }
+
+        .notification-filters {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            background: #f8f9fa;
+            color: #6c757d;
+            border: 1px solid #dee2e6;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .filter-btn:hover {
+            background: #e9ecef;
+            color: #495057;
+        }
+
+        .filter-btn.active {
+            background: #007bff;
+            color: white;
+            border-color: #007bff;
+        }
+
+        .notifications-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .notification-item {
+            background: white;
+            border: 1px solid #dee2e6;
+            border-radius: 12px;
+            padding: 20px;
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            transition: all 0.3s ease;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .notification-item:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            transform: translateY(-1px);
+        }
+
+        .notification-item.unread {
+            border-left: 4px solid #007bff;
+            background: #f8f9ff;
+        }
+
+        .notification-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .notification-icon.contract { background: #e3f2fd; color: #1976d2; }
+        .notification-icon.review { background: #fff3e0; color: #f57c00; }
+        .notification-icon.approval { background: #e8f5e8; color: #2e7d2e; }
+        .notification-icon.rejection { background: #ffebee; color: #c62828; }
+        .notification-icon.deadline { background: #fff8e1; color: #ff8f00; }
+        .notification-icon.system { background: #f3e5f5; color: #7b1fa2; }
+
+        .notification-content {
+            flex: 1;
+        }
+
+        .notification-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 8px;
+        }
+
+        .notification-header h4 {
+            margin: 0;
+            font-size: 16px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .notification-time {
+            font-size: 12px;
+            color: #6c757d;
+            white-space: nowrap;
+        }
+
+        .notification-message {
+            margin: 0 0 10px 0;
+            color: #495057;
+            line-height: 1.5;
+            font-size: 14px;
+        }
+
+        .notification-action {
+            color: #007bff;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .notification-action:hover {
+            text-decoration: underline;
+        }
+
+        .unread-indicator {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            width: 8px;
+            height: 8px;
+            background: #007bff;
+            border-radius: 50%;
+        }
+
+        .btn-mark-read-single {
+            background: none;
+            border: 1px solid #dee2e6;
+            padding: 8px;
+            border-radius: 6px;
+            cursor: pointer;
+            color: #6c757d;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+        }
+
+        .btn-mark-read-single:hover {
+            background: #28a745;
+            color: white;
+            border-color: #28a745;
+        }
+
+        .loading-state, .error-state, .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #6c757d;
+        }
+
+        .loading-state i {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .error-state i, .empty-state i {
+            font-size: 48px;
+            margin-bottom: 15px;
+            color: #dc3545;
+        }
+
+        .empty-state i {
+            color: #6c757d;
+        }
+
+        .btn-retry {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 15px;
+        }
+
+        @media (max-width: 768px) {
+            .notification-item {
+                padding: 15px;
+                gap: 12px;
+            }
+
+            .notification-header {
+                flex-direction: column;
+                gap: 5px;
+            }
+
+            .notification-filters {
+                gap: 8px;
+            }
+
+            .filter-btn {
+                padding: 6px 12px;
+                font-size: 13px;
+            }
+        }
+    </style>
+</body>
+
+</html>

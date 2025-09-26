@@ -4,13 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - Anchor</title>
+    <link rel="stylesheet" href="css/profil.css">
     <link href="Dashboard.css" rel="stylesheet"> 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 </head>
 
 <body>
-
-     <header class="top-header">
+    <header class="top-header">
         <div class="logo-container">
             <img src="assets/logo-pelindo.png" alt="Logo Pelindo">
         </div>
@@ -22,111 +22,530 @@
     <div class="main-container">
         <nav class="sidebar">
             <ul class="sidebar-menu">
-                <li><a href="#" class="active"><i class="fa-solid fa-grip active"></i> Beranda</a></li>
-                <li><a href="#"><i class="fa-solid fa-file-lines"></i> Dokumen</a></li>
-                <li><a href="#"><i class="fa-solid fa-bell"></i> Notifikasi</a></li>
-                <li><a href="#"><i class="fa-solid fa-clock-rotate-left"></i> Riwayat</a></li>
-                <li><a href="#"><i class="fa-solid fa-gear"></i> Pengaturan</a></li>
+                <li><a href="dashboard.html" class="active"><i class="fa-solid fa-grip active"></i> Beranda</a></li>
+                <li><a href="dokumen_all.html"><i class="fa-solid fa-file-lines"></i> Dokumen</a></li>
+                <li><a href="notifikasi.html"><i class="fa-solid fa-bell"></i> Notifikasi</a></li>
+                <li><a href="riwayat.html"><i class="fa-solid fa-clock-rotate-left"></i> Riwayat</a></li>
+                <li><a href="profil.html"><i class="fa-solid fa-gear"></i> Pengaturan</a></li>
             </ul>
 
             <div class="sidebar-profile">
-                <img class="profile-img" src="assets/profile-picture.jpg" alt="Foto Profil Keisha">
-                <a href="#" class="profile-link">
-                    <span class="profile-name">Keisha Sakura</span>
+                <img class="profile-img" src="assets/profile-picture.jpg" alt="Foto Profil">
+                <a href="profil.html" class="profile-link">
+                    <span class="profile-name">User</span>
                 </a>
-                <small class="profile-title">Tim Manajemen</small>
+                <small class="profile-title">Tim Internal</small>
+                <button onclick="window.auth.logout()" style="background: none; border: none; color: #fff; cursor: pointer; font-size: 12px; margin-top: 5px;">
+                    <i class="fa-solid fa-sign-out-alt"></i> Logout
+                </button>
             </div>
         </nav>
     </div>
 
-    <div class="main-content">
-
-        <p>Rata-rata Risiko Kontrak</p>
-        <div class="risiko-kontrak">
-
-            <div class="pie" style="--a:70; --b:20; --c:10;">
-                <div class="center">70%</div>
+        <main class="main-content">
+            <!-- Dashboard Header -->
+            <div class="dashboard-page-header">
+                <div class="header-text">
+                    <div class="header-title">
+                        <i class="fa-solid fa-grip"></i>
+                        <h2>Dashboard</h2>
+                    </div>
+                    <span id="currentDate">Loading...</span>
+                </div>
             </div>
 
-            <div class="styled-table1">
-                <table>
-                    <tr>
-                        <th>Judul Dokumen</th>
-                        <th>Nama Perusahaan</th>
-                        <th>Risiko</th>
-                    </tr>
-                    <tr>
-                        <td>Perjanjian Logistik ABCD</td>
-                        <td>PT Mandiri Edukasi Indonesia</td>
-                        <td>95</td>
-                    </tr>
-                    <tr>
-                        <td>Perjanjian Angkutan Barang</td>
-                        <td>CV ABCDE</td>
-                        <td>93</td>
-                    </tr>
-                    <tr>
-                        <td>Perjanjian Kerja Sama</td>
-                        <td>PT Makmur Abadi</td>
-                        <td>90</td>
-                    </tr>
-                    <tr>
-                        <td>Perjanjian Kerja Bakti</td>
-                        <td>PT Sejahtera</td>
-                        <td>88</td>
-                    </tr>
-                </table>
+            <!-- Risk Analysis Section -->
+            <div class="dashboard-section">
+                <div class="section-header">
+                    <h3><i class="fa-solid fa-chart-pie"></i> Analisis Risiko Kontrak</h3>
+                    <div class="risk-legend">
+                        <span class="legend-item high"><span class="color-box"></span> Tinggi (80+)</span>
+                        <span class="legend-item medium"><span class="color-box"></span> Sedang (50-79)</span>
+                        <span class="legend-item low"><span class="color-box"></span> Rendah (<50)</span>
+                    </div>
+                </div>
+                <div class="risiko-kontrak">
+            <div class="chart-container">
+                <div class="pie-chart" id="riskPieChart">
+                    <div class="chart-center">
+                        <div class="center-value" id="avgRiskScore">0</div>
+                        <div class="center-label">Rata-rata</div>
+                    </div>
+                </div>
+                <div class="risk-stats">
+                    <div class="risk-stat-item">
+                        <span class="stat-number" id="highRiskCount">0</span>
+                        <span class="stat-label">Risiko Tinggi</span>
+                    </div>
+                    <div class="risk-stat-item">
+                        <span class="stat-number" id="mediumRiskCount">0</span>
+                        <span class="stat-label">Risiko Sedang</span>
+                    </div>
+                    <div class="risk-stat-item">
+                        <span class="stat-number" id="lowRiskCount">0</span>
+                        <span class="stat-label">Risiko Rendah</span>
+                    </div>
+                </div>
             </div>
-        </div>
-            <table class="info-table" border="1">
+
+                <div class="styled-table1">
+                    <h3>Top Kontrak Berisiko Tinggi</h3>
+                    <table id="riskTable">
+                    <thead>
+                        <tr>
+                            <th>Judul Dokumen</th>
+                            <th>Nama Perusahaan</th>
+                            <th>Skor Risiko</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Data will be loaded dynamically -->
+                    </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Stats Overview Section -->
+            <div class="dashboard-section">
+                <div class="section-header">
+                    <h3><i class="fa-solid fa-chart-bar"></i> Ringkasan Statistik</h3>
+                </div>
+                <table class="info-table">
                 <tr>
-                    <th colspan="2">Total Kontrak Aktif 
-                        <p class="bignum">16</p>
+                    <th colspan="2">Total Kontrak Aktif
+                        <p class="bignum" id="totalActiveContracts">0</p>
                     </th>
                     <th rowspan="2">Total Nilai Kontrak
                         <p>Seluruh Kontrak</p>
-                        <p class="bignum">Rp15.578.900,00</p>
+                        <p class="bignum" id="totalContractValue">Rp0</p>
                         <p> </p>
                         <p>Sudah Direalisasikan</p>
-                        <p class="bignum-yellow">70%</p>
+                        <p class="bignum-yellow" id="realizedPercentage">0%</p>
                     </th>
                     <th rowspan="2">Kinerja Mitra
                         <p>Rata-rata Kinerja</p>
-                        <p class="bignum-green">83%</p>
+                        <p class="bignum-green" id="averagePerformance">0%</p>
                         <p></p>
                         <p>Jumlah Pelanggaran</p>
-                        <p class="bignum-green">20</p>
+                        <p class="bignum-green" id="totalViolations">0</p>
                     </th>
                 </tr>
                 <tr>
                     <td>Belum ditinjau
-                        <p class="bignum">8</p>
+                        <p class="bignum" id="pendingReview">0</p>
                     </td>
                     <td>Sedang ditinjau
-                        <p class="bignum">5</p>
+                        <p class="bignum" id="inReview">0</p>
                     </td>
                 </tr>
-            </table>
-
-            <div class="page-header">
-                <i class="fa-solid fa-bell"></i>
-                <h1 class="page-title">NOTIFIKASI</h1>
+                </table>
             </div>
 
-            <div class="notifications-list">
-                <article class="notification-item highlighted">
-                    <p>Tenggat peninjauan kontrak dengan judul <strong>"Penyajian Penyimpanan dan Pengiriman Barang
-                            dengan PT Tepi"</strong> akan jatuh tempo 2 hari lagi</p>
-                    <span class="timestamp">17:21 | 21/08/2025</span>
-                </article>
-                <article class="notification-item">
-                    <p>Tenggat peninjauan kontrak dengan judul <strong>"Perjanjian Penempatan Kapal PT Aru di Pelabuhan
-                            Merapi"</strong> telah disubmit untuk ditinjau dengan tenggat peninjauan 30 November 2025
-                    </p>
-                    <span class="timestamp">10:32 | 21/08/2025</span>
-                </article>
+            <!-- Notifications Section -->
+            <div class="dashboard-section">
+                <div class="section-header">
+                    <h3><i class="fa-solid fa-bell"></i> Notifikasi Terbaru</h3>
+                </div>
+                <div class="notifications-list" id="notificationsList">
+                    <!-- Notifications will be loaded dynamically -->
+                </div>
             </div>
+        </main>
     </div>
+
+    <script src="assets/js/api.js"></script>
+    <script src="assets/js/ui.js"></script>
+    <script>
+        let dashboardData = {};
+
+        async function loadDashboard() {
+            try {
+                // Load dashboard statistics
+                const stats = await window.api.getDashboardStats();
+                updateDashboardStats(stats);
+
+                // Load high-risk contracts for risk analysis table
+                const highRiskContracts = await window.api.getContracts({
+                    limit: 5,
+                    sortBy: 'risks.score',
+                    order: 'desc',
+                    minRisk: 70 // Only show contracts with risk score >= 70
+                });
+                updateRiskTable(highRiskContracts.contracts || []);
+
+                // Load recent notifications
+                const notifications = await window.api.getNotifications();
+                updateNotifications(notifications.slice(0, 3)); // Show latest 3
+            } catch (error) {
+                console.error('Failed to load dashboard:', error);
+            }
+        }
+
+        function updateDashboardStats(stats) {
+            document.getElementById('totalActiveContracts').textContent = stats.totalActive || 0;
+            document.getElementById('totalContractValue').textContent = window.utils.formatCurrency(stats.totalValue || 0);
+            document.getElementById('realizedPercentage').textContent = `${stats.realizedPercentage || 0}%`;
+            document.getElementById('averagePerformance').textContent = `${stats.averagePerformance || 0}%`;
+            document.getElementById('totalViolations').textContent = stats.totalViolations || 0;
+            document.getElementById('pendingReview').textContent = stats.pendingReview || 0;
+            document.getElementById('inReview').textContent = stats.inReview || 0;
+
+            // Update risk pie chart with average risk score
+            updateRiskChart(stats.riskDistribution || { high: 0, medium: 0, low: 0 }, stats.averageRisk || 0);
+        }
+
+        function updateRiskTable(contracts) {
+            const tbody = document.querySelector('#riskTable tbody');
+            tbody.innerHTML = '';
+
+            if (contracts.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="4" style="text-align: center; padding: 20px; color: #666;">
+                            Tidak ada data kontrak berisiko tinggi
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            contracts.forEach(contract => {
+                const riskScore = contract.risks?.score || 0;
+                const riskLevel = getRiskLevel(riskScore);
+                const statusText = getStatusText(contract.status);
+
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td title="${contract.metadata?.title || contract.filename}">
+                        ${truncateText(contract.metadata?.title || contract.filename, 40)}
+                    </td>
+                    <td>${contract.metadata?.parties?.[0] || 'N/A'}</td>
+                    <td>
+                        <span class="risk-badge risk-${riskLevel.toLowerCase()}">${riskScore}</span>
+                    </td>
+                    <td>
+                        <span class="status-badge status-${contract.status}">${statusText}</span>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function getRiskLevel(score) {
+            if (score >= 80) return 'HIGH';
+            if (score >= 50) return 'MEDIUM';
+            return 'LOW';
+        }
+
+        function getStatusText(status) {
+            const statusMap = {
+                'draft': 'Draft',
+                'in_review_legal': 'Review Legal',
+                'in_review_management': 'Review Manajemen',
+                'approved': 'Disetujui',
+                'rejected': 'Ditolak'
+            };
+            return statusMap[status] || status;
+        }
+
+        function truncateText(text, length) {
+            return text && text.length > length ? text.substring(0, length) + '...' : text;
+        }
+
+        function updateNotifications(notifications) {
+            const container = document.getElementById('notificationsList');
+            container.innerHTML = '';
+
+            notifications.forEach((notif, index) => {
+                const article = document.createElement('article');
+                article.className = `notification-item ${index === 0 ? 'highlighted' : ''}`;
+                article.innerHTML = `
+                    <p>${notif.message}</p>
+                    <span class="timestamp">${window.utils.formatDateTime(notif.createdAt)}</span>
+                `;
+                container.appendChild(article);
+            });
+        }
+
+        function updateRiskChart(riskDist, avgRisk = 0) {
+            const total = riskDist.high + riskDist.medium + riskDist.low;
+
+            // Update risk counts
+            document.getElementById('highRiskCount').textContent = riskDist.high || 0;
+            document.getElementById('mediumRiskCount').textContent = riskDist.medium || 0;
+            document.getElementById('lowRiskCount').textContent = riskDist.low || 0;
+            document.getElementById('avgRiskScore').textContent = Math.round(avgRisk || 0);
+
+            if (total > 0) {
+                const highPercent = (riskDist.high / total) * 100;
+                const mediumPercent = (riskDist.medium / total) * 100;
+                const lowPercent = (riskDist.low / total) * 100;
+
+                // Create pie chart using conic-gradient
+                const pieChart = document.getElementById('riskPieChart');
+                const gradient = `conic-gradient(
+                    #dc3545 0deg ${highPercent * 3.6}deg,
+                    #ffc107 ${highPercent * 3.6}deg ${(highPercent + mediumPercent) * 3.6}deg,
+                    #28a745 ${(highPercent + mediumPercent) * 3.6}deg 360deg
+                )`;
+
+                pieChart.style.background = gradient;
+            } else {
+                // No data - show empty state
+                const pieChart = document.getElementById('riskPieChart');
+                pieChart.style.background = '#e9ecef';
+            }
+        }
+
+        function loadNotifications() {
+            // For now, just show notifications inline in dashboard
+            alert('Fitur notifikasi akan segera tersedia!');
+        }
+
+        function loadHistory() {
+            // For now, just show history inline
+            alert('Fitur riwayat akan segera tersedia!');
+        }
+
+        // Search functionality
+        document.querySelector('.search-container input').addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            // Implement search logic here
+            console.log('Searching for:', searchTerm);
+        });
+
+        function updateCurrentDate() {
+            const options = {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                timeZone: 'Asia/Jakarta'
+            };
+            const currentDate = new Date().toLocaleDateString('id-ID', options);
+            document.getElementById('currentDate').textContent = currentDate;
+        }
+
+        // Initialize dashboard on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            updateCurrentDate();
+            loadDashboard();
+        });
+    </script>
+
+    <style>
+        /* Enhanced Dashboard Styles */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .section-header p {
+            font-size: 18px;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .risk-legend {
+            display: flex;
+            gap: 15px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 12px;
+        }
+
+        .color-box {
+            width: 12px;
+            height: 12px;
+            border-radius: 2px;
+        }
+
+        .legend-item.high .color-box { background: #dc3545; }
+        .legend-item.medium .color-box { background: #ffc107; }
+        .legend-item.low .color-box { background: #28a745; }
+
+        .chart-container {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            margin-bottom: 20px;
+        }
+
+        .pie-chart {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .chart-center {
+            background: white;
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: absolute;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .center-value {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .center-label {
+            font-size: 10px;
+            color: #666;
+        }
+
+        .risk-stats {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .risk-stat-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 10px 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            min-width: 80px;
+        }
+
+        .stat-number {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #666;
+            text-align: center;
+        }
+
+        .styled-table1 h3 {
+            margin: 0 0 15px 0;
+            color: #333;
+            font-size: 16px;
+        }
+
+        .risk-badge {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            color: white;
+        }
+
+        .risk-badge.risk-high { background: #dc3545; }
+        .risk-badge.risk-medium { background: #ffc107; color: #333; }
+        .risk-badge.risk-low { background: #28a745; }
+
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 500;
+        }
+
+        .status-badge.status-draft { background: #e9ecef; color: #495057; }
+        .status-badge.status-in_review_legal { background: #fff3cd; color: #856404; }
+        .status-badge.status-in_review_management { background: #d1ecf1; color: #0c5460; }
+        .status-badge.status-approved { background: #d4edda; color: #155724; }
+        .status-badge.status-rejected { background: #f8d7da; color: #721c24; }
+
+        .info-table .bignum {
+            font-size: 2em;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .bignum-yellow { color: #ffc107; }
+        .bignum-green { color: #28a745; }
+
+        .notifications-list {
+            max-height: 300px;
+            overflow-y: auto;
+            margin-top: 20px;
+        }
+
+        .notification-item {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            background: white;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .notification-item.highlighted {
+            border-left: 4px solid #007bff;
+            background: #f8f9ff;
+        }
+
+        .notification-item p {
+            margin: 0 0 5px 0;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+
+        .timestamp {
+            font-size: 12px;
+            color: #666;
+        }
+
+        /* Fix main content spacing and overlapping */
+        .main-content {
+            padding-top: 30px !important;
+            margin-left: 245px !important;
+            margin-top: 80px !important;
+            padding-left: 30px;
+            padding-right: 30px;
+            min-height: calc(100vh - 80px);
+            position: relative;
+            z-index: 1;
+        }
+
+        @media (max-width: 768px) {
+            .chart-container {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .risk-stats {
+                flex-direction: row;
+                justify-content: space-around;
+            }
+
+            .section-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .risk-legend {
+                flex-wrap: wrap;
+            }
+        }
+    </style>
 </body>
 </html>
 

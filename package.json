@@ -1,0 +1,21 @@
+{
+  "name": "anchor-frontend",
+  "version": "1.0.0",
+  "description": "ANCHOR Frontend - Contract Management System",
+  "main": "index.html",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": ["contract", "management", "frontend"],
+  "author": "ANCHOR Team",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2"
+  },
+  "devDependencies": {},
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}

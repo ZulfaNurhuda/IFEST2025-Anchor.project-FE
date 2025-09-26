@@ -1,0 +1,234 @@
+/* Riwayat Page Styles */
+body {
+    font-family: 'Inter', sans-serif;
+}
+
+.riwayat-page-header {
+    background: linear-gradient(135deg, #01204e, #0a2a6b);
+    border-radius: 15px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    color: white;
+    box-shadow: 0 4px 15px rgba(1, 32, 78, 0.2);
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+}
+
+.header-title {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.5rem;
+}
+
+.header-title i {
+    font-size: 1.8rem;
+    opacity: 0.9;
+}
+
+.header-text h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 0;
+}
+
+.header-text span {
+    font-size: 1rem;
+    opacity: 0.9;
+}
+
+.riwayat-section {
+    background: white;
+    border-radius: 15px;
+    padding: 2rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.section-header {
+    margin-bottom: 1.5rem;
+}
+
+.section-header h3 {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: #01204e;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.section-header i {
+    color: #01204e;
+    opacity: 0.8;
+}
+
+.date-filter select {
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 14px;
+    color: white;
+    cursor: pointer;
+}
+
+.date-filter select option {
+    color: #495057;
+    background: white;
+}
+
+.history-filters {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+}
+
+.filter-btn {
+    background: #f8f9fa;
+    color: #6c757d;
+    border: 1px solid #dee2e6;
+    padding: 8px 16px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.3s ease;
+}
+
+.filter-btn:hover {
+    background: #e9ecef;
+    color: #495057;
+}
+
+.filter-btn.active {
+    background: #007bff;
+    color: white;
+    border-color: #007bff;
+}
+
+.history-container {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.history-day {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.day-header {
+    background: linear-gradient(135deg, #01204e, #0a2a6b);
+    color: white;
+    padding: 15px 20px;
+    font-weight: 600;
+    font-size: 16px;
+}
+
+.day-logs {
+    padding: 0;
+}
+
+.history-item {
+    display: flex;
+    align-items: flex-start;
+    padding: 20px;
+    border-bottom: 1px solid #f1f3f4;
+    gap: 15px;
+    transition: background-color 0.3s ease;
+}
+
+.history-item:last-child {
+    border-bottom: none;
+}
+
+.history-item:hover {
+    background: #f8f9fa;
+}
+
+.history-time {
+    font-size: 12px;
+    color: #6c757d;
+    font-weight: 500;
+    min-width: 60px;
+    text-align: right;
+}
+
+.history-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 14px;
+}
+
+.history-icon.contract_upload { background: #e3f2fd; color: #1976d2; }
+.history-icon.contract_review { background: #fff3e0; color: #f57c00; }
+.history-icon.contract_approval { background: #e8f5e8; color: #2e7d2e; }
+.history-icon.contract_rejection { background: #ffebee; color: #c62828; }
+.history-icon.login { background: #e8f5e8; color: #2e7d2e; }
+.history-icon.logout { background: #fff8e1; color: #ff8f00; }
+.history-icon.profile_update { background: #f3e5f5; color: #7b1fa2; }
+.history-icon.system { background: #f1f8e9; color: #558b2f; }
+
+.history-content {
+    flex: 1;
+}
+
+.history-title {
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 4px;
+    font-size: 15px;
+}
+
+.history-description {
+    color: #495057;
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+.history-details {
+    margin-top: 8px;
+    font-size: 13px;
+    color: #6c757d;
+    font-style: italic;
+}
+
+.loading-state, .error-state, .empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: #6c757d;
+}
+
+.loading-state i {
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+.error-state i, .empty-state i {
+    font-size: 48px;
+    margin-bottom: 15px;
+    color: #dc3545;
+}
+
+.empty-state i {
+    color: #6c757d;
+}
+
+.btn-retry {
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-top: 15px;
+}
