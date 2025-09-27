@@ -18,9 +18,13 @@
             <input type="text" placeholder="Cari Kontrak ...">
             <i class="fa-solid fa-filter filter-icon"></i>
         </div>
+        <button class="menu-toggle" onclick="toggleSidebar()">
+            <i class="fa-solid fa-bars"></i>
+        </button>
     </header>
+    <div class="sidebar-overlay" onclick="closeSidebar()"></div>
     <div class="main-container">
-        <nav class="sidebar">
+        <nav class="sidebar" id="sidebar">
             <ul class="sidebar-menu">
                 <li><a href="dashboard.html" class="active"><i class="fa-solid fa-grip active"></i> Beranda</a></li>
                 <li><a href="dokumen_all.html"><i class="fa-solid fa-file-lines"></i> Dokumen</a></li>
@@ -162,23 +166,52 @@
         async function loadDashboard() {
             try {
                 // Load dashboard statistics
-                const stats = await window.api.getDashboardStats();
+                let stats = {};
+                try {
+                    stats = await window.api.getDashboardStats();
+                } catch (error) {
+                    console.error('Failed to load stats:', error);
+                    stats = {
+                        totalActive: 0,
+                        totalValue: 0,
+                        realizedPercentage: 0,
+                        averagePerformance: 0,
+                        totalViolations: 0,
+                        pendingReview: 0,
+                        inReview: 0,
+                        riskDistribution: { high: 0, medium: 0, low: 0 },
+                        averageRisk: 0
+                    };
+                }
                 updateDashboardStats(stats);
 
                 // Load high-risk contracts for risk analysis table
-                const highRiskContracts = await window.api.getContracts({
-                    limit: 5,
-                    sortBy: 'risks.score',
-                    order: 'desc',
-                    minRisk: 70 // Only show contracts with risk score >= 70
-                });
+                let highRiskContracts = { contracts: [] };
+                try {
+                    highRiskContracts = await window.api.getContracts({
+                        limit: 5,
+                        sortBy: 'risks.score',
+                        order: 'desc',
+                        minRisk: 70 // Only show contracts with risk score >= 70
+                    });
+                } catch (error) {
+                    console.error('Failed to load contracts:', error);
+                }
                 updateRiskTable(highRiskContracts.contracts || []);
 
                 // Load recent notifications
-                const notifications = await window.api.getNotifications();
+                let notifications = [];
+                try {
+                    const notificationResponse = await window.api.getNotifications();
+                    notifications = Array.isArray(notificationResponse) ? notificationResponse : [];
+                } catch (error) {
+                    console.error('Failed to load notifications:', error);
+                    notifications = [];
+                }
                 updateNotifications(notifications.slice(0, 3)); // Show latest 3
             } catch (error) {
                 console.error('Failed to load dashboard:', error);
+                window.ui && window.ui.displayError && window.ui.displayError('Gagal memuat data dashboard');
             }
         }
 
@@ -257,12 +290,23 @@
             const container = document.getElementById('notificationsList');
             container.innerHTML = '';
 
+            if (!notifications || notifications.length === 0) {
+                container.innerHTML = `
+                    <div class="notification-item">
+                        <p style="text-align: center; color: #666; font-style: italic;">
+                            Tidak ada notifikasi terbaru
+                        </p>
+                    </div>
+                `;
+                return;
+            }
+
             notifications.forEach((notif, index) => {
                 const article = document.createElement('article');
                 article.className = `notification-item ${index === 0 ? 'highlighted' : ''}`;
                 article.innerHTML = `
-                    <p>${notif.message}</p>
-                    <span class="timestamp">${window.utils.formatDateTime(notif.createdAt)}</span>
+                    <p>${notif.detail || 'Notifikasi tanpa pesan'}</p>
+                    <span class="timestamp">${notif.createdAt ? window.utils.formatDateTime(notif.createdAt) : 'Waktu tidak tersedia'}</span>
                 `;
                 container.appendChild(article);
             });
@@ -326,6 +370,39 @@
             const currentDate = new Date().toLocaleDateString('id-ID', options);
             document.getElementById('currentDate').textContent = currentDate;
         }
+
+        // Mobile sidebar toggle functions
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.querySelector('.sidebar-overlay');
+
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('show');
+        }
+
+        function closeSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.querySelector('.sidebar-overlay');
+
+            sidebar.classList.remove('open');
+            overlay.classList.remove('show');
+        }
+
+        // Close sidebar when clicking on menu items (mobile)
+        document.querySelectorAll('.sidebar-menu a').forEach(link => {
+            link.addEventListener('click', () => {
+                if (window.innerWidth <= 992) {
+                    closeSidebar();
+                }
+            });
+        });
+
+        // Close sidebar on window resize if desktop
+        window.addEventListener('resize', () => {
+            if (window.innerWidth > 992) {
+                closeSidebar();
+            }
+        });
 
         // Initialize dashboard on page load
         document.addEventListener('DOMContentLoaded', () => {

@@ -65,14 +65,14 @@ body {
 .search-container {
     position: relative;
     grid-column: 2;
-
-    padding: 0.6 1rem;
+    padding: 0.6rem 1rem;
     display: flex;
     align-items: center;
     background-color: var(--white);
     opacity: 45%;
     border-radius: 4px;
-    width: 500px;
+    width: 100%;
+    max-width: 500px;
     height: 35px;
     overflow: hidden;
 }
@@ -459,4 +459,258 @@ body {
 .dashboard-section .section-header h3 i {
     font-size: 1.2rem;
     opacity: 0.8;
+}
+
+/* Enhanced Responsive Design */
+@media (max-width: 1200px) {
+    .search-container {
+        max-width: 400px;
+    }
+
+    .main-content {
+        padding: 1.5rem;
+    }
+
+    .risiko-kontrak {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .pie {
+        --size: 200px;
+        margin-right: 0;
+        margin-bottom: 2rem;
+    }
+}
+
+@media (max-width: 992px) {
+    .sidebar {
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+        z-index: 1001;
+    }
+
+    .sidebar.open {
+        transform: translateX(0);
+    }
+
+    .main-content {
+        margin-left: 0;
+        padding: 1rem;
+    }
+
+    .top-header {
+        grid-template-columns: auto 1fr auto;
+        padding: 1rem;
+    }
+
+    .logo-container {
+        padding: 0 1rem;
+    }
+
+    .search-container {
+        max-width: 250px;
+        margin: 0 1rem;
+    }
+
+    .info-table th {
+        font-size: 16px;
+        padding: 10px;
+    }
+
+    .main-content .bignum,
+    .main-content .bignum-yellow,
+    .main-content .bignum-green {
+        font-size: 24px;
+    }
+}
+
+@media (max-width: 768px) {
+    .top-header {
+        grid-template-columns: auto 1fr;
+        padding: 0.75rem;
+    }
+
+    .search-container {
+        display: none;
+    }
+
+    .logo-container {
+        padding: 0 0.5rem;
+    }
+
+    .logo-container img {
+        height: 20px;
+        width: 80px;
+    }
+
+    .main-content {
+        padding: 0.75rem;
+        margin-top: 70px;
+    }
+
+    .dashboard-page-header {
+        padding: 1.5rem;
+        text-align: center;
+    }
+
+    .header-title {
+        justify-content: center;
+    }
+
+    .header-text h2 {
+        font-size: 1.5rem;
+    }
+
+    .dashboard-section {
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .pie {
+        --size: 150px;
+    }
+
+    .pie .center {
+        font-size: 32px;
+    }
+
+    .styled-table1 table,
+    .info-table {
+        font-size: 12px;
+    }
+
+    .styled-table1 th,
+    .styled-table1 td,
+    .info-table th,
+    .info-table td {
+        padding: 8px;
+    }
+
+    .main-content .bignum,
+    .main-content .bignum-yellow,
+    .main-content .bignum-green {
+        font-size: 20px;
+        margin: 5px;
+    }
+
+    .info-table th {
+        font-size: 14px;
+    }
+
+    .notification-item {
+        padding: 1rem;
+    }
+
+    .notification-item p {
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 576px) {
+    .top-header {
+        height: 60px;
+        padding: 0.5rem;
+    }
+
+    .main-content {
+        margin-top: 60px;
+        padding: 0.5rem;
+    }
+
+    .dashboard-page-header {
+        padding: 1rem;
+        border-radius: 10px;
+    }
+
+    .dashboard-section {
+        padding: 1rem;
+        border-radius: 10px;
+    }
+
+    .header-text h2 {
+        font-size: 1.25rem;
+    }
+
+    .dashboard-section .section-header h3 {
+        font-size: 1.1rem;
+    }
+
+    .pie {
+        --size: 120px;
+    }
+
+    .pie .center {
+        font-size: 24px;
+    }
+
+    .styled-table1 table,
+    .info-table {
+        font-size: 10px;
+    }
+
+    .styled-table1 th,
+    .styled-table1 td,
+    .info-table th,
+    .info-table td {
+        padding: 6px;
+    }
+
+    .main-content .bignum,
+    .main-content .bignum-yellow,
+    .main-content .bignum-green {
+        font-size: 18px;
+    }
+
+    .info-table th {
+        font-size: 12px;
+    }
+
+    .notification-item p {
+        font-size: 13px;
+    }
+
+    /* Stack table cells vertically on very small screens */
+    .info-table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+}
+
+/* Menu toggle button for mobile */
+.menu-toggle {
+    display: none;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0.5rem;
+    grid-column: 3;
+    justify-self: end;
+}
+
+@media (max-width: 992px) {
+    .menu-toggle {
+        display: block;
+    }
+}
+
+/* Overlay for mobile menu */
+.sidebar-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+}
+
+@media (max-width: 992px) {
+    .sidebar-overlay.show {
+        display: block;
+    }
 }
