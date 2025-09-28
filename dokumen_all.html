@@ -52,7 +52,7 @@
                     </div>
                     <span id="currentDate">Loading...</span>
                 </div>
-                <button onclick="window.location.href='upload.html'" class="btn-upload">
+                <button onclick="window.location.href='upload.html'" class="btn-upload" id="uploadButton" style="display: none;">
                     <i class="fa-solid fa-plus"></i> Upload Kontrak
                 </button>
             </div>
@@ -96,8 +96,18 @@
         </main>
     </div>
 
-
-    
+    <!-- Document Detail Modal -->
+    <div id="documentModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Detail Dokumen</h3>
+                <span class="modal-close" onclick="closeDocumentModal()">&times;</span>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- Content will be populated dynamically -->
+            </div>
+        </div>
+    </div>
 
     <script src="assets/js/api.js"></script>
     <script src="assets/js/ui.js"></script>
@@ -180,6 +190,7 @@
                                 <i class="fa-solid fa-download"></i>
                             </button>
                             ${canEdit(contract) ? `<button onclick="editDocument('${contract._id}')" class="action-btn edit" title="Edit"><i class="fa-solid fa-edit"></i></button>` : ''}
+                            ${canReview(contract) ? getReviewButtons(contract._id) : ''}
                         </td>
                     </tr>
                 `;
@@ -203,15 +214,297 @@
             return userInfo && (userInfo.role === 'internal' && contract.status === 'draft');
         }
 
+        function canReview(contract) {
+            const userInfo = window.auth.getUserInfo();
+            if (!userInfo) return false;
+
+            if (userInfo.role === 'legal' && contract.status === 'in_review_legal') {
+                return true;
+            }
+            if (userInfo.role === 'management' && contract.status === 'in_review_management') {
+                return true;
+            }
+            return false;
+        }
+
+        function getReviewButtons(contractId) {
+            return `
+                <button onclick="reviewContract('${contractId}', true)" class="action-btn approve" title="Setujui">
+                    <i class="fa-solid fa-check"></i>
+                </button>
+                <button onclick="reviewContract('${contractId}', false)" class="action-btn reject" title="Tolak">
+                    <i class="fa-solid fa-times"></i>
+                </button>
+            `;
+        }
+
         async function viewDocument(id) {
             try {
                 const contract = await window.api.getContract(id);
-                // Show contract details in modal or navigate to detail page
-                alert(`Viewing: ${contract.metadata?.title || contract.filename}`);
+                showDocumentModal(contract);
             } catch (error) {
                 window.ui.displayError('Gagal memuat detail dokumen');
             }
         }
+
+        function showDocumentModal(contract) {
+            const modal = document.getElementById('documentModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalBody = document.getElementById('modalBody');
+
+            modalTitle.textContent = contract.metadata?.title || contract.filename;
+
+            // Create modal content with tabs
+            modalBody.innerHTML = `
+                <div class="modal-tabs">
+                    <button class="tab-btn active" onclick="showTab('basic-info')">Informasi Dasar</button>
+                    <button class="tab-btn" onclick="showTab('ai-analysis')">Analisis AI</button>
+                    <button class="tab-btn" onclick="showTab('risk-details')">Detail Risiko</button>
+                    <button class="tab-btn" onclick="showTab('recommendations')">Rekomendasi</button>
+                </div>
+
+                <div class="tab-content">
+                    <!-- Basic Info Tab -->
+                    <div id="basic-info" class="tab-pane active">
+                        <div class="info-grid">
+                            <div class="info-item">
+                                <label>Nama File:</label>
+                                <span>${contract.filename}</span>
+                            </div>
+                            <div class="info-item">
+                                <label>Judul Kontrak:</label>
+                                <span>${contract.metadata?.title || '-'}</span>
+                            </div>
+                            <div class="info-item">
+                                <label>Pihak Terkait:</label>
+                                <span>${contract.metadata?.parties?.join(', ') || '-'}</span>
+                            </div>
+                            <div class="info-item">
+                                <label>Nilai Kontrak:</label>
+                                <span>${contract.metadata?.value ? window.utils.formatCurrency(contract.metadata.value) : '-'}</span>
+                            </div>
+                            <div class="info-item">
+                                <label>Tanggal Berlaku:</label>
+                                <span>${contract.metadata?.effectiveDate ? window.utils.formatDate(contract.metadata.effectiveDate) : '-'}</span>
+                            </div>
+                            <div class="info-item">
+                                <label>Yurisdiksi:</label>
+                                <span>${contract.metadata?.jurisdiction || '-'}</span>
+                            </div>
+                            <div class="info-item">
+                                <label>Status:</label>
+                                <span class="status ${getStatusInfo(contract.status).class}">${getStatusInfo(contract.status).text}</span>
+                            </div>
+                            <div class="info-item">
+                                <label>Tanggal Upload:</label>
+                                <span>${window.utils.formatDateTime(contract.createdAt)}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- AI Analysis Tab -->
+                    <div id="ai-analysis" class="tab-pane">
+                        ${generateAIAnalysisContent(contract.aiInsights)}
+                    </div>
+
+                    <!-- Risk Details Tab -->
+                    <div id="risk-details" class="tab-pane">
+                        ${generateRiskDetailsContent(contract.risks, contract.aiInsights)}
+                    </div>
+
+                    <!-- Recommendations Tab -->
+                    <div id="recommendations" class="tab-pane">
+                        ${generateRecommendationsContent(contract.aiInsights?.recommendations)}
+                    </div>
+                </div>
+            `;
+
+            modal.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function generateAIAnalysisContent(aiInsights) {
+            if (!aiInsights) {
+                return `
+                    <div class="no-analysis">
+                        <i class="fa-solid fa-robot"></i>
+                        <h4>Analisis AI Tidak Tersedia</h4>
+                        <p>Dokumen ini diupload sebelum fitur AI tersedia atau analisis gagal dilakukan.</p>
+                    </div>
+                `;
+            }
+
+            return `
+                <div class="ai-analysis-content">
+                    <div class="confidence-section">
+                        <h4><i class="fa-solid fa-chart-line"></i> Tingkat Akurasi AI</h4>
+                        <div class="confidence-grid">
+                            <div class="confidence-item">
+                                <span class="confidence-label">Judul:</span>
+                                <span class="confidence-badge confidence-${aiInsights.confidence?.title || 'low'}">
+                                    ${(aiInsights.confidence?.title || 'low').toUpperCase()}
+                                </span>
+                            </div>
+                            <div class="confidence-item">
+                                <span class="confidence-label">Pihak Terkait:</span>
+                                <span class="confidence-badge confidence-${aiInsights.confidence?.parties || 'low'}">
+                                    ${(aiInsights.confidence?.parties || 'low').toUpperCase()}
+                                </span>
+                            </div>
+                            <div class="confidence-item">
+                                <span class="confidence-label">Tanggal Berlaku:</span>
+                                <span class="confidence-badge confidence-${aiInsights.confidence?.effectiveDate || 'low'}">
+                                    ${(aiInsights.confidence?.effectiveDate || 'low').toUpperCase()}
+                                </span>
+                            </div>
+                            <div class="confidence-item">
+                                <span class="confidence-label">Nilai Kontrak:</span>
+                                <span class="confidence-badge confidence-${aiInsights.confidence?.value || 'low'}">
+                                    ${(aiInsights.confidence?.value || 'low').toUpperCase()}
+                                </span>
+                            </div>
+                            <div class="confidence-item">
+                                <span class="confidence-label">Yurisdiksi:</span>
+                                <span class="confidence-badge confidence-${aiInsights.confidence?.jurisdiction || 'low'}">
+                                    ${(aiInsights.confidence?.jurisdiction || 'low').toUpperCase()}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    ${aiInsights.keyTerms && Object.keys(aiInsights.keyTerms).length > 0 ? `
+                        <div class="key-terms-section">
+                            <h4><i class="fa-solid fa-key"></i> Terms yang Ditemukan AI</h4>
+                            <div class="key-terms-grid">
+                                ${Object.entries(aiInsights.keyTerms).map(([key, value]) =>
+                                    value ? `
+                                        <div class="key-term-item">
+                                            <span class="term-label">${formatTermLabel(key)}:</span>
+                                            <span class="term-value">${value}</span>
+                                        </div>
+                                    ` : ''
+                                ).join('')}
+                            </div>
+                        </div>
+                    ` : ''}
+
+                    <div class="analysis-meta">
+                        <p><strong>Tanggal Analisis:</strong> ${window.utils.formatDateTime(aiInsights.analysisDate)}</p>
+                        <p><strong>Versi AI:</strong> ${aiInsights.aiVersion}</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        function generateRiskDetailsContent(risks, aiInsights) {
+            const riskScore = risks?.score || 0;
+            const riskLevel = riskScore >= 70 ? 'high' : riskScore >= 40 ? 'medium' : 'low';
+            const riskColor = riskLevel === 'high' ? '#dc3545' : riskLevel === 'medium' ? '#ffc107' : '#28a745';
+
+            return `
+                <div class="risk-analysis-content">
+                    <div class="risk-score-display">
+                        <div class="risk-circle-large" style="border-color: ${riskColor}">
+                            <span style="color: ${riskColor}">${riskScore}</span>
+                            <small>/ 100</small>
+                        </div>
+                        <div class="risk-info">
+                            <h4>Skor Risiko Keseluruhan</h4>
+                            <p class="risk-level risk-${riskLevel}">Tingkat Risiko: ${riskLevel.toUpperCase()}</p>
+                        </div>
+                    </div>
+
+                    ${risks?.details && risks.details.length > 0 ? `
+                        <div class="risk-details-list">
+                            <h4>Detail Risiko yang Terdeteksi</h4>
+                            ${risks.details.map(detail => `
+                                <div class="risk-detail-item risk-${detail.severity}">
+                                    <div class="risk-header">
+                                        <strong>${detail.clause}</strong>
+                                        <span class="severity-badge severity-${detail.severity}">${detail.severity.toUpperCase()}</span>
+                                    </div>
+                                    <p>${detail.risk}</p>
+                                </div>
+                            `).join('')}
+                        </div>
+                    ` : '<p>Tidak ada detail risiko yang terdeteksi.</p>'}
+                </div>
+            `;
+        }
+
+        function generateRecommendationsContent(recommendations) {
+            if (!recommendations || recommendations.length === 0) {
+                return `
+                    <div class="no-recommendations">
+                        <i class="fa-solid fa-lightbulb"></i>
+                        <h4>Tidak Ada Rekomendasi</h4>
+                        <p>Tidak ada rekomendasi khusus untuk dokumen ini.</p>
+                    </div>
+                `;
+            }
+
+            return `
+                <div class="recommendations-content">
+                    <div class="recommendations-list">
+                        ${recommendations.map(rec => `
+                            <div class="recommendation-card priority-${rec.priority}">
+                                <div class="rec-header">
+                                    <span class="rec-priority priority-${rec.priority}">${rec.priority.toUpperCase()}</span>
+                                    <span class="rec-category">${rec.category}</span>
+                                </div>
+                                <h5>${rec.title}</h5>
+                                <p class="rec-description">${rec.description}</p>
+                                <div class="rec-action">
+                                    <strong>Tindakan yang Disarankan:</strong>
+                                    <p>${rec.action}</p>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        function formatTermLabel(key) {
+            const labels = {
+                contractValue: 'Nilai Kontrak',
+                effectiveDate: 'Tanggal Berlaku',
+                expiryDate: 'Tanggal Berakhir',
+                performancePeriod: 'Periode Pelaksanaan',
+                paymentTerms: 'Syarat Pembayaran'
+            };
+            return labels[key] || key;
+        }
+
+        function showTab(tabId) {
+            // Hide all tab panes
+            document.querySelectorAll('.tab-pane').forEach(pane => {
+                pane.classList.remove('active');
+            });
+
+            // Remove active class from all tab buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            // Show selected tab
+            document.getElementById(tabId).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        function closeDocumentModal() {
+            const modal = document.getElementById('documentModal');
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        // Close modal when clicking outside
+        window.addEventListener('click', (event) => {
+            const modal = document.getElementById('documentModal');
+            if (event.target === modal) {
+                closeDocumentModal();
+            }
+        });
 
         async function downloadDocument(id, filename) {
             try {
@@ -232,6 +525,47 @@
         function editDocument(id) {
             // Navigate to edit page or open edit modal
             window.location.href = `edit.html?id=${id}`;
+        }
+
+        async function reviewContract(contractId, approved) {
+            const userInfo = window.auth.getUserInfo();
+            if (!userInfo) {
+                window.ui.displayError('User tidak terautentikasi');
+                return;
+            }
+
+            // Get review note from user
+            const note = prompt(
+                approved ? 'Masukkan catatan persetujuan (opsional):' : 'Masukkan alasan penolakan:',
+                ''
+            );
+
+            if (!approved && !note?.trim()) {
+                window.ui.displayError('Alasan penolakan wajib diisi');
+                return;
+            }
+
+            try {
+                let response;
+                if (userInfo.role === 'legal') {
+                    response = await window.api.reviewContractLegal(contractId, approved, note || '');
+                } else if (userInfo.role === 'management') {
+                    response = await window.api.reviewContractManagement(contractId, approved, note || '');
+                } else {
+                    window.ui.displayError('Anda tidak memiliki hak untuk melakukan review');
+                    return;
+                }
+
+                window.ui.displaySuccess(
+                    approved ? 'Kontrak berhasil disetujui' : 'Kontrak berhasil ditolak'
+                );
+
+                // Reload documents to show updated status
+                loadDocuments();
+            } catch (error) {
+                console.error('Review failed:', error);
+                window.ui.displayError('Gagal melakukan review: ' + (error.message || 'Terjadi kesalahan'));
+            }
         }
 
         function updatePagination(totalPages, currentPageNum) {
@@ -306,9 +640,22 @@
             document.getElementById('currentDate').textContent = currentDate;
         }
 
+        // Check user permissions and show/hide upload button
+        function checkUserPermissions() {
+            const userInfo = window.auth.getUserInfo();
+            const uploadButton = document.getElementById('uploadButton');
+
+            if (userInfo && userInfo.role === 'internal') {
+                uploadButton.style.display = 'block';
+            } else {
+                uploadButton.style.display = 'none';
+            }
+        }
+
         // Initialize on page load
         document.addEventListener('DOMContentLoaded', () => {
             updateCurrentDate();
+            checkUserPermissions();
             loadDocuments();
         });
     </script>
@@ -337,10 +684,14 @@
         .action-btn.view { color: #007bff; }
         .action-btn.download { color: #28a745; }
         .action-btn.edit { color: #ffc107; }
+        .action-btn.approve { color: #28a745; background: #f8fff8; }
+        .action-btn.reject { color: #dc3545; background: #fff8f8; }
 
         .action-btn.view:hover { background: #e3f2fd; }
         .action-btn.download:hover { background: #e8f5e8; }
         .action-btn.edit:hover { background: #fff8e1; }
+        .action-btn.approve:hover { background: #d4edda; }
+        .action-btn.reject:hover { background: #f8d7da; }
 
         .status.ditolak {
             background: #ffebee;
@@ -451,6 +802,443 @@
 
         #documentsTable tr:hover {
             background-color: #f8f9fa;
+        }
+
+        /* Modal Styles */
+        .modal {
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(2px);
+        }
+
+        .modal-content {
+            position: relative;
+            background-color: white;
+            margin: 2% auto;
+            padding: 0;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 900px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 30px;
+            border-bottom: 1px solid #e1e5e9;
+            background: linear-gradient(135deg, var(--blue), #0a2a6b);
+            color: white;
+            border-radius: 15px 15px 0 0;
+        }
+
+        .modal-header h3 {
+            margin: 0;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .modal-close {
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            color: white;
+            opacity: 0.8;
+            transition: opacity 0.3s;
+        }
+
+        .modal-close:hover {
+            opacity: 1;
+        }
+
+        .modal-body {
+            padding: 0;
+        }
+
+        /* Tab Styles */
+        .modal-tabs {
+            display: flex;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e1e5e9;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 15px 20px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+            color: #666;
+            transition: all 0.3s;
+            border-bottom: 3px solid transparent;
+        }
+
+        .tab-btn.active {
+            color: var(--blue);
+            border-bottom-color: var(--blue);
+            background: white;
+        }
+
+        .tab-btn:hover {
+            background: #f0f0f0;
+        }
+
+        .tab-content {
+            padding: 30px;
+        }
+
+        .tab-pane {
+            display: none;
+        }
+
+        .tab-pane.active {
+            display: block;
+        }
+
+        /* Info Grid */
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .info-item label {
+            font-weight: 600;
+            color: #333;
+            font-size: 14px;
+        }
+
+        .info-item span {
+            color: #666;
+            font-size: 14px;
+        }
+
+        /* AI Analysis Styles */
+        .no-analysis, .no-recommendations {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+
+        .no-analysis i, .no-recommendations i {
+            font-size: 48px;
+            color: #ddd;
+            margin-bottom: 15px;
+        }
+
+        .confidence-section {
+            margin-bottom: 30px;
+        }
+
+        .confidence-section h4 {
+            color: var(--blue);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .confidence-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .confidence-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .confidence-label {
+            font-weight: 500;
+            color: #333;
+        }
+
+        .confidence-badge {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .confidence-badge.confidence-high {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .confidence-badge.confidence-medium {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .confidence-badge.confidence-low {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        /* Key Terms */
+        .key-terms-section {
+            margin-bottom: 30px;
+        }
+
+        .key-terms-section h4 {
+            color: var(--blue);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .key-terms-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+
+        .key-term-item {
+            padding: 12px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid var(--blue);
+        }
+
+        .term-label {
+            font-weight: 600;
+            color: #333;
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .term-value {
+            color: #666;
+            font-size: 14px;
+        }
+
+        /* Risk Analysis */
+        .risk-score-display {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .risk-circle-large {
+            width: 120px;
+            height: 120px;
+            border: 6px solid;
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: white;
+        }
+
+        .risk-circle-large span {
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .risk-circle-large small {
+            font-size: 14px;
+            opacity: 0.7;
+        }
+
+        .risk-details-list h4 {
+            color: var(--blue);
+            margin-bottom: 15px;
+        }
+
+        .risk-detail-item {
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            border-left: 4px solid;
+        }
+
+        .risk-detail-item.risk-critical {
+            background: #ffebee;
+            border-color: #c62828;
+        }
+
+        .risk-detail-item.risk-high {
+            background: #fff3e0;
+            border-color: #f57c00;
+        }
+
+        .risk-detail-item.risk-medium {
+            background: #fff8e1;
+            border-color: #fbc02d;
+        }
+
+        .risk-detail-item.risk-low {
+            background: #e8f5e8;
+            border-color: #4caf50;
+        }
+
+        .risk-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .severity-badge {
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            color: white;
+        }
+
+        .severity-badge.severity-critical { background: #c62828; }
+        .severity-badge.severity-high { background: #f57c00; }
+        .severity-badge.severity-medium { background: #fbc02d; color: #333; }
+        .severity-badge.severity-low { background: #4caf50; }
+
+        /* Recommendations */
+        .recommendation-card {
+            border: 1px solid #e1e5e9;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            position: relative;
+        }
+
+        .recommendation-card.priority-critical { border-left: 5px solid #dc3545; }
+        .recommendation-card.priority-high { border-left: 5px solid #fd7e14; }
+        .recommendation-card.priority-medium { border-left: 5px solid #ffc107; }
+        .recommendation-card.priority-low { border-left: 5px solid #28a745; }
+
+        .rec-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .rec-priority {
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 11px;
+            font-weight: 600;
+            color: white;
+        }
+
+        .rec-priority.priority-critical { background: #dc3545; }
+        .rec-priority.priority-high { background: #fd7e14; }
+        .rec-priority.priority-medium { background: #ffc107; color: #333; }
+        .rec-priority.priority-low { background: #28a745; }
+
+        .rec-category {
+            background: #f8f9fa;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 11px;
+            color: #495057;
+            font-weight: 500;
+        }
+
+        .recommendation-card h5 {
+            margin: 10px 0;
+            color: #333;
+            font-size: 16px;
+        }
+
+        .rec-description {
+            color: #666;
+            margin: 10px 0;
+            line-height: 1.5;
+        }
+
+        .rec-action {
+            background: #f8f9fa;
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+
+        .rec-action strong {
+            color: var(--blue);
+        }
+
+        .rec-action p {
+            margin: 5px 0 0 0;
+            color: #555;
+        }
+
+        .analysis-meta {
+            margin-top: 30px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            font-size: 13px;
+        }
+
+        .analysis-meta p {
+            margin: 5px 0;
+            color: #666;
+        }
+
+        /* Responsive Modal */
+        @media (max-width: 768px) {
+            .modal-content {
+                width: 95%;
+                margin: 1% auto;
+                max-height: 95vh;
+            }
+
+            .modal-header {
+                padding: 15px 20px;
+            }
+
+            .modal-header h3 {
+                font-size: 1.25rem;
+            }
+
+            .tab-content {
+                padding: 20px;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+
+            .confidence-grid,
+            .key-terms-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .risk-score-display {
+                flex-direction: column;
+                text-align: center;
+                gap: 20px;
+            }
+
+            .tab-btn {
+                padding: 12px 10px;
+                font-size: 12px;
+            }
         }
     </style>
 </body>

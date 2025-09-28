@@ -8,13 +8,16 @@
     "dev": "node server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": ["contract", "management", "frontend"],
+  "keywords": [
+    "contract",
+    "management",
+    "frontend"
+  ],
   "author": "ANCHOR Team",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.18.2"
+    "express": "^4.21.2"
   },
-  "devDependencies": {},
   "engines": {
     "node": ">=14.0.0"
   }

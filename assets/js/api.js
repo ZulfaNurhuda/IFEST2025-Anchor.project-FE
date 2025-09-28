@@ -90,8 +90,11 @@ class ApiClient {
             config.headers.Authorization = `Bearer ${token}`;
         }
 
+        console.log('API Request:', { url, method: config.method || 'GET', headers: config.headers });
+
         try {
             const response = await fetch(url, config);
+            console.log('API Response status:', response.status);
 
             if (response.status === 401) {
                 logout();
@@ -100,15 +103,15 @@ class ApiClient {
 
             if (!response.ok) {
                 const error = await response.json().catch(() => ({ message: 'Network error' }));
-                throw new Error(error.message || 'Request failed');
+                console.error('API Error response:', error);
+                throw new Error(error.message || `Request failed (${response.status})`);
             }
 
-            return await response.json();
+            const result = await response.json();
+            console.log('API Success response:', result);
+            return result;
         } catch (error) {
             console.error('API Request failed:', error);
-            if (window.ui && window.ui.displayError) {
-                window.ui.displayError(error.message);
-            }
             throw error;
         }
     }
@@ -214,12 +217,27 @@ class ApiClient {
     }
 
     // Notification endpoints
-    async getNotifications() {
-        return this.request('/notifications');
+    async getNotifications(params = {}) {
+        const searchParams = new URLSearchParams();
+        Object.entries(params).forEach(([key, value]) => {
+            if (value !== undefined && value !== null && value !== '') {
+                searchParams.append(key, value);
+            }
+        });
+
+        const query = searchParams.toString();
+        const endpoint = query ? `/notifications?${query}` : '/notifications';
+        return this.request(endpoint);
     }
 
-    async markNotificationRead(id) {
+    async markNotificationAsRead(id) {
         return this.request(`/notifications/${id}/read`, {
+            method: 'POST'
+        });
+    }
+
+    async markAllNotificationsAsRead() {
+        return this.request('/notifications/mark-all-read', {
             method: 'POST'
         });
     }
@@ -246,6 +264,37 @@ class ApiClient {
         return this.request('/users/profile', {
             method: 'PUT',
             body: JSON.stringify(profileData)
+        });
+    }
+
+    // Parse endpoints
+    async parseContract(formData) {
+        const token = getToken();
+        const response = await fetch(`${this.baseURL}/parse/contract`, {
+            method: 'POST',
+            headers: {
+                Authorization: `Bearer ${token}`
+            },
+            body: formData // FormData object with file
+        });
+
+        if (response.status === 401) {
+            logout();
+            throw new Error('Unauthorized');
+        }
+
+        if (!response.ok) {
+            const error = await response.json().catch(() => ({ message: 'Parse failed' }));
+            throw new Error(error.message || 'Parse failed');
+        }
+
+        return await response.json();
+    }
+
+    async parseMetadata(text) {
+        return this.request('/parse/metadata', {
+            method: 'POST',
+            body: JSON.stringify({ text })
         });
     }
 }
@@ -302,5 +351,25 @@ window.utils = {
         if (score >= 80) return 'high';
         if (score >= 50) return 'medium';
         return 'low';
+    },
+
+    formatTimeAgo: (date) => {
+        const now = new Date();
+        const then = new Date(date);
+        const diffMs = now - then;
+        const diffMins = Math.floor(diffMs / (1000 * 60));
+        const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+        const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+        if (diffMins < 1) return 'Baru saja';
+        if (diffMins < 60) return `${diffMins} menit yang lalu`;
+        if (diffHours < 24) return `${diffHours} jam yang lalu`;
+        if (diffDays < 7) return `${diffDays} hari yang lalu`;
+
+        return new Intl.DateTimeFormat('id-ID', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric'
+        }).format(then);
     }
 };

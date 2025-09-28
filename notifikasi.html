@@ -90,6 +90,8 @@
 
         async function loadNotifications() {
             try {
+                console.log('Loading notifications...', { currentPage, currentFilter, searchQuery });
+
                 const params = {
                     page: currentPage,
                     limit: 10,
@@ -97,15 +99,22 @@
                     search: searchQuery || undefined
                 };
 
+                console.log('API params:', params);
                 const response = await window.api.getNotifications(params);
-                displayNotifications(response.notifications || []);
+                console.log('API response:', response);
+
+                // Handle direct array response (no pagination wrapper)
+                const notifications = Array.isArray(response) ? response : (response.notifications || []);
+                console.log('Processed notifications:', notifications);
+
+                displayNotifications(notifications);
                 updatePagination(response.pagination?.totalPages || 1, response.pagination?.currentPage || 1);
             } catch (error) {
                 console.error('Failed to load notifications:', error);
                 document.getElementById('notificationsContainer').innerHTML = `
                     <div class="error-state">
                         <i class="fa-solid fa-exclamation-triangle"></i>
-                        <p>Gagal memuat notifikasi</p>
+                        <p>Gagal memuat notifikasi: ${error.message}</p>
                         <button onclick="loadNotifications()" class="btn-retry">Coba Lagi</button>
                     </div>
                 `;
@@ -136,11 +145,11 @@
                         </div>
                         <div class="notification-content">
                             <div class="notification-header">
-                                <h4>${notif.title}</h4>
+                                <h4>${getNotificationTitle(notif.type)}</h4>
                                 <span class="notification-time">${timeAgo}</span>
                             </div>
-                            <p class="notification-message">${notif.message}</p>
-                            ${notif.actionUrl ? `<a href="${notif.actionUrl}" class="notification-action">Lihat Detail</a>` : ''}
+                            <p class="notification-message">${notif.detail || 'Notifikasi tanpa keterangan'}</p>
+                            ${notif.meta?.contractId ? `<a href="dokumen_all.html?highlight=${notif.meta.contractId}" class="notification-action">Lihat Detail</a>` : ''}
                         </div>
                         ${!notif.read ? '<div class="unread-indicator"></div>' : ''}
                         <button onclick="markAsRead('${notif._id}')" class="btn-mark-read-single" title="Tandai dibaca">
@@ -160,32 +169,50 @@
 
         function getNotificationIcon(type) {
             const iconMap = {
-                'contract': 'fa-solid fa-file-contract',
-                'review': 'fa-solid fa-magnifying-glass',
-                'approval': 'fa-solid fa-check-circle',
-                'rejection': 'fa-solid fa-times-circle',
+                'contract_uploaded': 'fa-solid fa-file-contract',
+                'need_approval': 'fa-solid fa-magnifying-glass',
+                'contract_approved': 'fa-solid fa-check-circle',
+                'contract_rejected': 'fa-solid fa-times-circle',
                 'deadline': 'fa-solid fa-clock',
                 'system': 'fa-solid fa-cog'
             };
             return iconMap[type] || 'fa-solid fa-bell';
         }
 
+        function getNotificationTitle(type) {
+            const titleMap = {
+                'contract_uploaded': 'Kontrak Baru Diunggah',
+                'need_approval': 'Menunggu Persetujuan',
+                'contract_approved': 'Kontrak Disetujui',
+                'contract_rejected': 'Kontrak Ditolak',
+                'deadline': 'Deadline Kontrak',
+                'system': 'Notifikasi Sistem'
+            };
+            return titleMap[type] || 'Notifikasi';
+        }
+
         async function markAsRead(notificationId) {
             try {
+                console.log('Marking notification as read:', notificationId);
                 await window.api.markNotificationAsRead(notificationId);
+                console.log('Successfully marked as read');
                 loadNotifications(); // Refresh the list
             } catch (error) {
-                window.ui.displayError('Gagal menandai notifikasi sebagai dibaca');
+                console.error('Error marking as read:', error);
+                window.ui.displayError('Gagal menandai notifikasi sebagai dibaca: ' + error.message);
             }
         }
 
         async function markAllAsRead() {
             try {
+                console.log('Marking all notifications as read');
                 await window.api.markAllNotificationsAsRead();
+                console.log('Successfully marked all as read');
                 loadNotifications(); // Refresh the list
                 window.ui.displaySuccess('Semua notifikasi telah ditandai sebagai dibaca');
             } catch (error) {
-                window.ui.displayError('Gagal menandai semua notifikasi sebagai dibaca');
+                console.error('Error marking all as read:', error);
+                window.ui.displayError('Gagal menandai semua notifikasi sebagai dibaca: ' + error.message);
             }
         }
 
