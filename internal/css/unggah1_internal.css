@@ -202,7 +202,6 @@ body {
     display: block;
     font-size: 0.9rem;
     color: var(--white);
-<<<<<<< HEAD
 }
 
 .upload-container {
@@ -355,6 +354,4 @@ body {
 .btn-upload:hover {
     transform: translateY(-4px);
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
-=======
->>>>>>> 077c2c51b627bebdf7d894d6c742dbc2bd062cde
 }

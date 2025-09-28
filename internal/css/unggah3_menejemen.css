@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 * {
     box-sizing: border-box;
 }
@@ -19,7 +18,6 @@ body {
 }
 
 :root {
-    /* ... variabel Anda yang lain ... */
     --white: #f8f8f8;
     --blue: #01204e;
     --text-secondary: #A9B4C2;
@@ -344,5 +342,3 @@ body {
     color: #28a745;
     border: 1px solid #28a745;
 }
-=======
->>>>>>> 077c2c51b627bebdf7d894d6c742dbc2bd062cde
